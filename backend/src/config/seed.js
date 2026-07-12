@@ -18,7 +18,7 @@ const seed = async () => {
     await query(`
       INSERT INTO users (name, email, password_hash, role) VALUES
       ('Fleet Manager', 'fleet@transitops.com', $1, 'fleet_manager'),
-      ('John Driver', 'driver@transitops.com', $1, 'driver'),
+      ('John Dispatcher', 'driver@transitops.com', $1, 'dispatcher'),
       ('Safety Officer', 'safety@transitops.com', $1, 'safety_officer'),
       ('Finance Analyst', 'finance@transitops.com', $1, 'financial_analyst')
     `, [password]);
@@ -92,7 +92,7 @@ const seed = async () => {
     console.log('');
     console.log('📧 Demo accounts:');
     console.log('  fleet@transitops.com     | password123 | Fleet Manager');
-    console.log('  driver@transitops.com    | password123 | Driver');
+    console.log('  driver@transitops.com    | password123 | Dispatcher');
     console.log('  safety@transitops.com    | password123 | Safety Officer');
     console.log('  finance@transitops.com   | password123 | Financial Analyst');
 
