@@ -386,7 +386,9 @@ npm run migrate
 
 # Seed the database with demo/test data
 npm run seed
-```
+
+# Start backend on port 5000
+npm run dev
 
 ### 3. Frontend Setup
 Install dependencies and start the dev server:
