@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -30,6 +31,13 @@ function ProtectedLayout({ children }) {
   );
 }
 
+function LandingRedirect() {
+  useEffect(() => {
+    window.location.replace('/landing.html');
+  }, []);
+  return null;
+}
+
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
 
@@ -46,7 +54,7 @@ function AppRoutes() {
       <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
       {/* Google OAuth2 Callback — handles redirect from backend after Google auth */}
       <Route path="/auth/callback" element={<OAuthCallback />} />
-      <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingRedirect />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
