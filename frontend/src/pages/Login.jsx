@@ -102,12 +102,12 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-bg" />
 
-      <div className="login-card" style={{ maxWidth: '440px', background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
+      <div className="login-card" style={{ maxWidth: '440px' }}>
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '32px', fontFamily: '"Comic Sans MS", cursive, sans-serif', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '4px' }}>
+          <h1 style={{ fontSize: '32px', fontFamily: '"Comic Sans MS", cursive, sans-serif', fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '4px' }}>
             {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
           </h1>
-          <p style={{ fontSize: '15px', color: 'var(--text-secondary)' }}>
+          <p style={{ fontSize: '15px', color: 'var(--text-muted)' }}>
             {mode === 'login' ? 'Enter your credentials to continue' : 'Join our operations team today'}
           </p>
         </div>
@@ -116,11 +116,10 @@ export default function LoginPage() {
           <>
             <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>EMAIL</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>EMAIL</label>
                 <input
                   type="email"
-                  className="form-input"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  className="logistica-input"
                   placeholder="Raven.k@transitops.in"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
@@ -129,12 +128,12 @@ export default function LoginPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>PASSWORD</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>PASSWORD</label>
                 <div style={{ position: 'relative' }}>
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    className="form-input"
-                    style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px', paddingRight: '44px' }}
+                    className="logistica-input"
+                    style={{ paddingRight: '44px' }}
                     placeholder="••••••••"
                     value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
@@ -146,7 +145,7 @@ export default function LoginPage() {
                     style={{
                       position: 'absolute', right: 12, top: '50%',
                       transform: 'translateY(-50%)', background: 'none',
-                      border: 'none', color: 'var(--text-secondary)', cursor: 'pointer',
+                      border: 'none', color: 'var(--text-muted)', cursor: 'pointer',
                       display: 'flex', alignItems: 'center'
                     }}
                   >
@@ -156,10 +155,10 @@ export default function LoginPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>ROLE (RBAC)</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>ROLE (RBAC)</label>
                 <select
                   className="form-select"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', background: 'var(--bg-main)', border: '1px solid var(--border)', color: 'var(--text-main)' }}
                   value={form.role}
                   onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
                   required
@@ -171,22 +170,22 @@ export default function LoginPage() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-muted)' }}>
                   <input
                     type="checkbox"
                     checked={rememberMe}
                     onChange={e => setRememberMe(e.target.checked)}
-                    style={{ width: '16px', height: '16px', accentColor: '#a16207' }}
+                    style={{ width: '16px', height: '16px', accentColor: 'var(--logistica-primary)' }}
                   />
                   Remember me
                 </label>
-                <a href="#forgot" style={{ color: 'var(--text-accent)', textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); toast.error("Contact your fleet administrator to reset password."); }}>
+                <a href="#forgot" style={{ color: 'var(--logistica-primary)', textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); toast.error("Contact your fleet administrator to reset password."); }}>
                   Forgot password?
                 </a>
               </div>
 
               {error && (
-                <div className="alert alert-danger">
+                <div className="logistica-alert logistica-alert-danger">
                   <AlertCircle size={15} style={{ flexShrink: 0 }} />
                   {error}
                 </div>
@@ -194,15 +193,11 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="btn btn-lg w-full"
+                className="btn-logistica"
                 style={{
-                  background: '#a16207',
-                  color: 'white',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  fontWeight: 'bold',
-                  boxShadow: 'none',
-                  fontSize: '15px'
+                  width: '100%',
+                  padding: '14px',
+                  fontSize: '16px'
                 }}
                 disabled={loading}
               >
@@ -211,11 +206,11 @@ export default function LoginPage() {
             </form>
 
             <div style={{ textAlign: 'center', marginTop: '16px' }}>
-              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Don't have an account? </span>
+              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Don't have an account? </span>
               <button
                 type="button"
                 onClick={toggleMode}
-                style={{ background: 'none', border: 'none', color: 'var(--primary-light)', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}
+                style={{ background: 'none', border: 'none', color: 'var(--logistica-primary)', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}
               >
                 Create one
               </button>
@@ -223,7 +218,7 @@ export default function LoginPage() {
 
             <div className="divider" style={{ margin: '20px 0 16px', opacity: 0.2 }} />
 
-            <div style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.8' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: '1.8' }}>
               <div style={{ fontWeight: '600', marginBottom: '6px' }}>Access is scoped by role after login:</div>
               <ul style={{ paddingLeft: '16px', listStyleType: 'disc' }}>
                 <li>Fleet Manager &rarr; Fleet, Maintenance</li>
@@ -237,11 +232,10 @@ export default function LoginPage() {
           <>
             <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>FULL NAME</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>FULL NAME</label>
                 <input
                   type="text"
-                  className="form-input"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  className="logistica-input"
                   placeholder="Yuvraj Pandiya"
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -250,11 +244,10 @@ export default function LoginPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>EMAIL ADDRESS</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>EMAIL ADDRESS</label>
                 <input
                   type="email"
-                  className="form-input"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  className="logistica-input"
                   placeholder="Raven.k@transitops.in"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
@@ -263,12 +256,12 @@ export default function LoginPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>PASSWORD</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>PASSWORD</label>
                 <div style={{ position: 'relative' }}>
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    className="form-input"
-                    style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px', paddingRight: '44px' }}
+                    className="logistica-input"
+                    style={{ paddingRight: '44px' }}
                     placeholder="••••••••"
                     value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
@@ -280,7 +273,7 @@ export default function LoginPage() {
                     style={{
                       position: 'absolute', right: 12, top: '50%',
                       transform: 'translateY(-50%)', background: 'none',
-                      border: 'none', color: 'var(--text-secondary)', cursor: 'pointer',
+                      border: 'none', color: 'var(--text-muted)', cursor: 'pointer',
                       display: 'flex', alignItems: 'center'
                     }}
                   >
@@ -290,10 +283,10 @@ export default function LoginPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>ROLE (RBAC) <span style={{ color: 'var(--danger)' }}>*</span></label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>ROLE (RBAC) <span style={{ color: 'var(--danger)' }}>*</span></label>
                 <select
                   className="form-select"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', background: 'var(--bg-main)', border: '1px solid var(--border)', color: 'var(--text-main)' }}
                   value={form.role}
                   onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
                   required
@@ -305,7 +298,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="alert alert-danger">
+                <div className="logistica-alert logistica-alert-danger">
                   <AlertCircle size={15} style={{ flexShrink: 0 }} />
                   {error}
                 </div>
@@ -313,15 +306,11 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                className="btn btn-primary btn-lg w-full"
+                className="btn-logistica"
                 style={{
-                  background: '#a16207',
-                  color: 'white',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  fontWeight: 'bold',
-                  boxShadow: 'none',
-                  fontSize: '15px'
+                  width: '100%',
+                  padding: '14px',
+                  fontSize: '16px'
                 }}
                 disabled={loading}
               >
@@ -335,7 +324,7 @@ export default function LoginPage() {
                 onClick={toggleMode}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '6px',
-                  background: 'none', border: 'none', color: 'var(--text-secondary)',
+                  background: 'none', border: 'none', color: 'var(--text-muted)',
                   cursor: 'pointer', fontSize: '13px', fontWeight: '500'
                 }}
               >
