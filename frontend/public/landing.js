@@ -1,3 +1,13 @@
+// Immediately apply stored theme to avoid visual flash
+(function() {
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+  if (currentTheme === 'light') {
+    document.documentElement.classList.add('light');
+  } else {
+    document.documentElement.classList.remove('light');
+  }
+})();
+
 // ── Loader ──────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   const loader = document.getElementById('loader');
@@ -18,6 +28,18 @@ window.addEventListener('DOMContentLoaded', () => {
       main.style.transform  = 'translateY(0)';
     }, 600);
   }, 3000);
+
+  // ── Theme Toggle ──
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    themeToggle.textContent = document.documentElement.classList.contains('light') ? '🌙' : '☀️';
+
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.documentElement.classList.toggle('light');
+      themeToggle.textContent = isLight ? '🌙' : '☀️';
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    });
+  }
 
   // ── Navbar scroll ──
   const nav = document.querySelector('nav');

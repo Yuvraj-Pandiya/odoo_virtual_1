@@ -201,39 +201,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-<<<<<<< HEAD
-=======
-              <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>ROLE (RBAC)</label>
-                <select
-                  className="form-select"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
-                  value={form.role}
-                  onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
-                  required
-                >
-                  {ROLES.map(r => (
-                    <option key={r.value} value={r.value}>{r.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)' }}>
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={e => setRememberMe(e.target.checked)}
-                    style={{ width: '16px', height: '16px', accentColor: '#FF3E41' }}
-                  />
-                  Remember me
-                </label>
-                <a href="#forgot" style={{ color: 'var(--text-accent)', textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); toast.error("Contact your fleet administrator to reset password."); }}>
-                  Forgot password?
-                </a>
-              </div>
-
->>>>>>> ae3ad45 (feat: landing page theme styling updates and register page integration)
               {error && (
                 <div className="logistica-alert logistica-alert-danger">
                   <AlertCircle size={15} style={{ flexShrink: 0 }} />
@@ -245,19 +212,9 @@ export default function LoginPage() {
                 type="submit"
                 className="btn-logistica"
                 style={{
-<<<<<<< HEAD
                   width: '100%',
                   padding: '14px',
                   fontSize: '16px'
-=======
-                  background: '#FF3E41',
-                  color: 'white',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  fontWeight: 'bold',
-                  boxShadow: 'none',
-                  fontSize: '15px'
->>>>>>> ae3ad45 (feat: landing page theme styling updates and register page integration)
                 }}
                 disabled={loading}
               >
@@ -424,19 +381,9 @@ export default function LoginPage() {
                 type="submit"
                 className="btn-logistica"
                 style={{
-<<<<<<< HEAD
                   width: '100%',
                   padding: '14px',
                   fontSize: '16px'
-=======
-                  background: '#FF3E41',
-                  color: 'white',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  fontWeight: 'bold',
-                  boxShadow: 'none',
-                  fontSize: '15px'
->>>>>>> ae3ad45 (feat: landing page theme styling updates and register page integration)
                 }}
                 disabled={loading}
               >
