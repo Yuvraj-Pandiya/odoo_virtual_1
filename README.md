@@ -386,7 +386,8 @@ npm run migrate
 
 # Seed the database with demo/test data
 npm run seed
-```
+#
+npm run dev
 
 ### 3. Frontend Setup
 Install dependencies and start the dev server:
