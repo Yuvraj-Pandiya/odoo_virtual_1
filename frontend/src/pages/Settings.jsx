@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 const ROLES = [
   { value: 'fleet_manager', label: 'Fleet Manager' },
-  { value: 'driver', label: 'Driver' },
+  { value: 'dispatcher', label: 'Dispatcher' },
   { value: 'safety_officer', label: 'Safety Officer' },
   { value: 'financial_analyst', label: 'Financial Analyst' }
 ];
@@ -26,7 +26,7 @@ export default function Settings() {
   // Forms
   const [profileForm, setProfileForm] = useState({ name: user?.name || '', email: user?.email || '' });
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
-  const [newUserForm, setNewUserForm] = useState({ name: '', email: '', password: '', role: 'driver' });
+  const [newUserForm, setNewUserForm] = useState({ name: '', email: '', password: '', role: 'dispatcher' });
 
   // System parameters (simulated/localStorage based settings)
   const [sysConfig, setSysConfig] = useState(() => {
@@ -111,7 +111,7 @@ export default function Settings() {
     try {
       await api.post('/auth/register', newUserForm);
       toast.success('New user registered successfully!');
-      setNewUserForm({ name: '', email: '', password: '', role: 'driver' });
+      setNewUserForm({ name: '', email: '', password: '', role: 'dispatcher' });
       loadUsers();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to register user.');

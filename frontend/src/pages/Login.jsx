@@ -1,79 +1,51 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
 import { Zap, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-// Google 'G' SVG icon — official Google brand colors
-const GoogleIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-    <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
-    <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-    <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
-  </svg>
-);
-
-const DEMO_ACCOUNTS = [
-  { role: 'Fleet Manager', email: 'fleet@transitops.com', color: '#6366f1' },
-  { role: 'Driver', email: 'driver@transitops.com', color: '#06b6d4' },
-  { role: 'Safety Officer', email: 'safety@transitops.com', color: '#10b981' },
-  { role: 'Financial Analyst', email: 'finance@transitops.com', color: '#f59e0b' },
-];
-
 const ROLES = [
   { value: 'fleet_manager', label: 'Fleet Manager' },
-  { value: 'driver', label: 'Driver' },
+  { value: 'dispatcher', label: 'Dispatcher' },
   { value: 'safety_officer', label: 'Safety Officer' },
   { value: 'financial_analyst', label: 'Financial Analyst' }
 ];
 
 export default function LoginPage() {
   const [mode, setMode] = useState('login'); // 'login' or 'register'
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'driver' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'dispatcher' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  // Read ?error param set by backend on OAuth2 rejection (e.g., local account conflict)
-  useEffect(() => {
-    const urlError = searchParams.get('error');
-    if (urlError) {
-      setError(decodeURIComponent(urlError));
-    }
-  }, [searchParams]);
-
-  /**
-   * handleGoogleLogin
-   * WHY: Google OAuth2 is a browser-redirect flow — NOT an axios/fetch call.
-   *      We redirect the full browser window to the backend Google auth route.
-   *      Passport handles the redirect to Google, Google calls back to backend,
-   *      backend generates JWT and redirects to /auth/callback (OAuthCallback.jsx).
-   */
-  const handleGoogleLogin = () => {
-    setGoogleLoading(true);
-    setError('');
-    // Full page redirect — intentional (OAuth2 requires browser redirect)
-    window.location.href = 'http://localhost:5000/api/auth/google';
-  };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError('');
-    if (!form.email || !form.password) {
-      setError('Please enter email and password.');
+    if (!form.email || !form.password || !form.role) {
+      setError('Please enter email, password, and select your role.');
       return;
     }
     setLoading(true);
     try {
-      await login(form.email, form.password);
+      const user = await login(form.email, form.password, form.role);
       toast.success('Welcome to TransitOps!');
-      navigate('/dashboard');
+      
+      // Scoped redirection based on user role
+      if (user.role === 'fleet_manager') {
+        navigate('/vehicles');
+      } else if (user.role === 'dispatcher') {
+        navigate('/dashboard');
+      } else if (user.role === 'safety_officer') {
+        navigate('/drivers');
+      } else if (user.role === 'financial_analyst') {
+        navigate('/fuel');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Check your credentials.');
     } finally {
@@ -98,9 +70,21 @@ export default function LoginPage() {
       const { data } = await api.post('/auth/register', { name, email, password, role });
       localStorage.setItem('transitops_token', data.token);
       localStorage.setItem('transitops_user', JSON.stringify(data.user));
-      // Trigger a page refresh to reload context state & route correctly
-      toast.success('Account created! Welcome to TransitOps.');
-      window.location.href = '/dashboard';
+      
+      toast.success('Account created successfully!');
+      
+      // Auto redirect based on role
+      if (data.user.role === 'fleet_manager') {
+        window.location.href = '/vehicles';
+      } else if (data.user.role === 'dispatcher') {
+        window.location.href = '/dashboard';
+      } else if (data.user.role === 'safety_officer') {
+        window.location.href = '/drivers';
+      } else if (data.user.role === 'financial_analyst') {
+        window.location.href = '/fuel';
+      } else {
+        window.location.href = '/dashboard';
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed.');
     } finally {
@@ -108,58 +92,53 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemo = (email) => {
-    setForm(f => ({ ...f, email, password: 'password123' }));
-    setError('');
-  };
-
   const toggleMode = () => {
     setError('');
-    setForm({ name: '', email: '', password: '', role: 'driver' });
+    setForm({ name: '', email: '', password: '', role: 'dispatcher' });
     setMode(m => m === 'login' ? 'register' : 'login');
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundImage: 'url(/img/carousel-1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 0 }} />
+    <div className="login-page">
+      <div className="login-bg" />
 
-      <div className="logistica-card" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: mode === 'register' ? '460px' : '420px', padding: '40px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, borderRadius: '50%', backgroundColor: 'var(--logistica-primary)', color: 'white', marginBottom: 16 }}>
-             <Zap size={32} />
-          </div>
-          <h2 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>Logistica</h2>
-          <p style={{ color: 'var(--text-muted)' }}>Smart Transport Operations Platform</p>
+      <div className="login-card" style={{ maxWidth: '440px', background: 'var(--bg-surface)', borderColor: 'var(--border)' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '32px', fontFamily: '"Comic Sans MS", cursive, sans-serif', fontWeight: 'bold', color: 'var(--text-primary)', marginBottom: '4px' }}>
+            {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
+          </h1>
+          <p style={{ fontSize: '15px', color: 'var(--text-secondary)' }}>
+            {mode === 'login' ? 'Enter your credentials to continue' : 'Join our operations team today'}
+          </p>
         </div>
 
         {mode === 'login' ? (
           <>
-            <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form onSubmit={handleSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div className="form-group">
-                <label className="form-label" htmlFor="login-email">Email Address</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>EMAIL</label>
                 <input
-                  id="login-email"
                   type="email"
-                  className="logistica-input"
-                  placeholder="you@transitops.com"
+                  className="form-input"
+                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  placeholder="Raven.k@transitops.in"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                  autoComplete="email"
+                  required
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="login-password">Password</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>PASSWORD</label>
                 <div style={{ position: 'relative' }}>
                   <input
-                    id="login-password"
                     type={showPassword ? 'text' : 'password'}
-                    className="logistica-input"
+                    className="form-input"
+                    style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px', paddingRight: '44px' }}
                     placeholder="••••••••"
                     value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                    style={{ paddingRight: 44 }}
-                    autoComplete="current-password"
+                    required
                   />
                   <button
                     type="button"
@@ -167,7 +146,7 @@ export default function LoginPage() {
                     style={{
                       position: 'absolute', right: 12, top: '50%',
                       transform: 'translateY(-50%)', background: 'none',
-                      border: 'none', color: 'var(--text-muted)', cursor: 'pointer',
+                      border: 'none', color: 'var(--text-secondary)', cursor: 'pointer',
                       display: 'flex', alignItems: 'center'
                     }}
                   >
@@ -176,124 +155,124 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              <div className="form-group">
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>ROLE (RBAC)</label>
+                <select
+                  className="form-select"
+                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  value={form.role}
+                  onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+                  required
+                >
+                  {ROLES.map(r => (
+                    <option key={r.value} value={r.value}>{r.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={e => setRememberMe(e.target.checked)}
+                    style={{ width: '16px', height: '16px', accentColor: '#a16207' }}
+                  />
+                  Remember me
+                </label>
+                <a href="#forgot" style={{ color: 'var(--text-accent)', textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); toast.error("Contact your fleet administrator to reset password."); }}>
+                  Forgot password?
+                </a>
+              </div>
+
               {error && (
-                <div className="logistica-alert logistica-alert-danger">
-                  <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+                <div className="alert alert-danger">
+                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
                   {error}
                 </div>
               )}
 
-              <button id="login-submit-btn" type="submit" className="btn-logistica" style={{ width: '100%', padding: '14px', fontSize: 16 }} disabled={loading}>
+              <button
+                type="submit"
+                className="btn btn-lg w-full"
+                style={{
+                  background: '#a16207',
+                  color: 'white',
+                  borderRadius: '10px',
+                  padding: '12px',
+                  fontWeight: 'bold',
+                  boxShadow: 'none',
+                  fontSize: '15px'
+                }}
+                disabled={loading}
+              >
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
             </form>
 
-            {/* ─── Google OAuth Button ─── */}
-            <div style={{ marginTop: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '0 0 16px' }}>
-                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-                <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>or continue with</span>
-                <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
-              </div>
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Don't have an account? </span>
               <button
-                id="google-login-btn"
-                type="button"
-                className="btn-google"
-                onClick={handleGoogleLogin}
-                disabled={googleLoading || loading}
-              >
-                {googleLoading ? (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span className="google-spinner" />
-                    Connecting to Google...
-                  </span>
-                ) : (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <GoogleIcon />
-                    Continue with Google
-                  </span>
-                )}
-              </button>
-            </div>
-
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
-              <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Don't have an account? </span>
-              <button
-                id="toggle-register-btn"
                 type="button"
                 onClick={toggleMode}
-                style={{ background: 'none', border: 'none', color: 'var(--primary-light)', fontWeight: 600, cursor: 'pointer', fontSize: 13 }}
+                style={{ background: 'none', border: 'none', color: 'var(--primary-light)', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}
               >
                 Create one
               </button>
             </div>
 
-            <div className="divider" style={{ margin: '20px 0 16px' }} />
+            <div className="divider" style={{ margin: '20px 0 16px', opacity: 0.2 }} />
 
-            <div>
-              <p style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', marginBottom: 12 }}>
-                Demo Accounts (password: password123)
-              </p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                {DEMO_ACCOUNTS.map(({ role, email, color }) => (
-                  <button
-                    key={email}
-                    id={`demo-${role.toLowerCase().replace(' ', '-')}`}
-                    type="button"
-                    onClick={() => fillDemo(email)}
-                    style={{
-                      background: `${color}14`, border: `1px solid ${color}30`,
-                      borderRadius: 'var(--radius-sm)', padding: '8px 10px',
-                      cursor: 'pointer', textAlign: 'left', transition: 'all 150ms'
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = `${color}60`}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = `${color}30`}
-                  >
-                    <div style={{ fontSize: 11, fontWeight: 700, color, marginBottom: 2 }}>{role}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{email}</div>
-                  </button>
-                ))}
-              </div>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: '1.8' }}>
+              <div style={{ fontWeight: '600', marginBottom: '6px' }}>Access is scoped by role after login:</div>
+              <ul style={{ paddingLeft: '16px', listStyleType: 'disc' }}>
+                <li>Fleet Manager &rarr; Fleet, Maintenance</li>
+                <li>Dispatcher &rarr; Dashboard, Trips</li>
+                <li>Safety Officer &rarr; Drivers, Compliance</li>
+                <li>Financial Analyst &rarr; Fuel &amp; Expenses, Analytics</li>
+              </ul>
             </div>
           </>
         ) : (
           <>
-            <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form onSubmit={handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div className="form-group">
-                <label className="form-label" htmlFor="register-name">Full Name</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>FULL NAME</label>
                 <input
-                  id="register-name"
                   type="text"
-                  className="logistica-input"
+                  className="form-input"
+                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
                   placeholder="Yuvraj Pandiya"
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  required
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="register-email">Email Address</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>EMAIL ADDRESS</label>
                 <input
-                  id="register-email"
                   type="email"
-                  className="logistica-input"
-                  placeholder="you@transitops.com"
+                  className="form-input"
+                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
+                  placeholder="Raven.k@transitops.in"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  required
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="register-password">Password</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>PASSWORD</label>
                 <div style={{ position: 'relative' }}>
                   <input
-                    id="register-password"
                     type={showPassword ? 'text' : 'password'}
-                    className="logistica-input"
+                    className="form-input"
+                    style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px', paddingRight: '44px' }}
                     placeholder="••••••••"
                     value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                    style={{ paddingRight: 44 }}
+                    required
                   />
                   <button
                     type="button"
@@ -301,7 +280,7 @@ export default function LoginPage() {
                     style={{
                       position: 'absolute', right: 12, top: '50%',
                       transform: 'translateY(-50%)', background: 'none',
-                      border: 'none', color: 'var(--text-muted)', cursor: 'pointer',
+                      border: 'none', color: 'var(--text-secondary)', cursor: 'pointer',
                       display: 'flex', alignItems: 'center'
                     }}
                   >
@@ -311,12 +290,13 @@ export default function LoginPage() {
               </div>
 
               <div className="form-group">
-                <label className="form-label" htmlFor="register-role">Assign Role</label>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-secondary)' }}>ROLE (RBAC) <span style={{ color: 'var(--danger)' }}>*</span></label>
                 <select
-                  id="register-role"
                   className="form-select"
+                  style={{ background: 'transparent', border: '1.5px solid var(--border)', padding: '12px 14px', borderRadius: '8px' }}
                   value={form.role}
                   onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+                  required
                 >
                   {ROLES.map(r => (
                     <option key={r.value} value={r.value}>{r.label}</option>
@@ -325,25 +305,38 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="logistica-alert logistica-alert-danger">
-                  <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
+                <div className="alert alert-danger">
+                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
                   {error}
                 </div>
               )}
 
-              <button id="register-submit-btn" type="submit" className="btn-logistica" style={{ width: '100%', padding: '14px', fontSize: 16 }} disabled={loading}>
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg w-full"
+                style={{
+                  background: '#a16207',
+                  color: 'white',
+                  borderRadius: '10px',
+                  padding: '12px',
+                  fontWeight: 'bold',
+                  boxShadow: 'none',
+                  fontSize: '15px'
+                }}
+                disabled={loading}
+              >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>
 
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
               <button
                 type="button"
                 onClick={toggleMode}
                 style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  display: 'inline-flex', alignItems: 'center', gap: '6px',
                   background: 'none', border: 'none', color: 'var(--text-secondary)',
-                  cursor: 'pointer', fontSize: 13, fontWeight: 500
+                  cursor: 'pointer', fontSize: '13px', fontWeight: '500'
                 }}
               >
                 <ArrowLeft size={14} /> Back to Sign In

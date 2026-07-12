@@ -19,10 +19,10 @@ const generateToken = (user) => {
 // POST /api/auth/login
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Email and password are required.' });
+    if (!email || !password || !role) {
+      return res.status(400).json({ success: false, message: 'Email, password, and role selection are required.' });
     }
 
     const result = await query(
@@ -38,6 +38,10 @@ const login = async (req, res) => {
 
     if (!user.is_active) {
       return res.status(401).json({ success: false, message: 'Account is disabled. Contact admin.' });
+    }
+
+    if (user.role !== role) {
+      return res.status(403).json({ success: false, message: `Access denied. Selected role '${role}' does not match your registered profile role.` });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
@@ -69,7 +73,7 @@ const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
+    const validRoles = ['fleet_manager', 'dispatcher', 'safety_officer', 'financial_analyst'];
     if (!name || !email || !password || !role) {
       return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
@@ -136,7 +140,7 @@ const updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
-    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
+    const validRoles = ['fleet_manager', 'dispatcher', 'safety_officer', 'financial_analyst'];
 
     if (!role || !validRoles.includes(role)) {
       return res.status(400).json({ success: false, message: 'Invalid role.' });

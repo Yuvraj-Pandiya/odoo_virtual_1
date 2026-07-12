@@ -25,9 +25,17 @@ const sections = {
 
 const roleLabels = {
   fleet_manager: 'Fleet Manager',
+  dispatcher: 'Dispatcher',
   driver: 'Driver',
   safety_officer: 'Safety Officer',
   financial_analyst: 'Financial Analyst',
+};
+
+const roleRoutes = {
+  fleet_manager: ['/vehicles', '/drivers', '/maintenance', '/settings'],
+  dispatcher: ['/dashboard', '/trips', '/settings'],
+  safety_officer: ['/drivers', '/settings'],
+  financial_analyst: ['/fuel', '/reports', '/settings']
 };
 
 export default function Sidebar() {
@@ -39,7 +47,11 @@ export default function Sidebar() {
     navigate('/login');
   };
 
-  const grouped = navItems.reduce((acc, item) => {
+  // Filter nav items based on the user's role
+  const allowedRoutes = roleRoutes[user?.role] || ['/settings'];
+  const filteredNavItems = navItems.filter(item => allowedRoutes.includes(item.to));
+
+  const grouped = filteredNavItems.reduce((acc, item) => {
     if (!acc[item.section]) acc[item.section] = [];
     acc[item.section].push(item);
     return acc;
