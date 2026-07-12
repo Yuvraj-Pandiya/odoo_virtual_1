@@ -16,7 +16,7 @@ const emptyComplete = { actual_distance_km: '', fuel_consumed_l: '' };
 
 export default function Trips() {
   const { hasRole } = useAuth();
-  const canCreate = hasRole('fleet_manager', 'driver');
+  const canCreate = hasRole('fleet_manager', 'dispatcher');
 
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);

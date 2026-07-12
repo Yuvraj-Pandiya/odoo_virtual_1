@@ -32,7 +32,7 @@ const roleLabels = {
 };
 
 const roleRoutes = {
-  fleet_manager: ['/vehicles', '/drivers', '/maintenance', '/settings'],
+  fleet_manager: ['/vehicles', '/drivers', '/trips', '/maintenance', '/settings'],
   dispatcher: ['/dashboard', '/trips', '/settings'],
   safety_officer: ['/drivers', '/settings'],
   financial_analyst: ['/fuel', '/reports', '/settings']
