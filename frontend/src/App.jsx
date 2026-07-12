@@ -13,6 +13,7 @@ import Fuel from './pages/Fuel';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import OAuthCallback from './pages/OAuthCallback';
+import RoleSelection from './pages/RoleSelection';
 
 const roleRoutes = {
   fleet_manager: ['/vehicles', '/drivers', '/maintenance', '/settings'],
@@ -68,6 +69,8 @@ function AppRoutes() {
       <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
       {/* Google OAuth2 Callback — handles redirect from backend after Google auth */}
       <Route path="/auth/callback" element={<OAuthCallback />} />
+      {/* Google OAuth2 Role Selection — shown to brand-new Google users only */}
+      <Route path="/auth/select-role" element={<RoleSelection />} />
       <Route path="/" element={isAuthenticated ? <Navigate to={defaultLanding[user?.role] || "/dashboard"} replace /> : <Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

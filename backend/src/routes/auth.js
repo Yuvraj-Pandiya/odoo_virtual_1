@@ -22,7 +22,7 @@ const passport = require('passport');
 const {
   login, register, getMe, getUsers,
   updateUserRole, updateUserStatus, updateProfile, changePassword,
-  googleCallback,
+  googleCallback, googleCompleteSignup,
 } = require('../controllers/authController');
 const { authenticate } = require('../middleware/auth');
 const { authorize } = require('../middleware/rbac');
@@ -70,5 +70,13 @@ router.get('/google/callback',
   }),
   googleCallback
 );
+
+/**
+ * POST /api/auth/google/complete-signup
+ * Called by RoleSelection.jsx after user picks their role.
+ * The pending_token (from URL param) proves Google authenticated them.
+ * No auth middleware needed — the pending JWT is the identity proof.
+ */
+router.post('/google/complete-signup', googleCompleteSignup);
 
 module.exports = router;

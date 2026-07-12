@@ -1,23 +1,16 @@
 /**
  * passport.js — Google OAuth2 Strategy
  * ----------------------------------------
- * WHY: Passport.js is the industry-standard authentication middleware for Node.js.
- *      `passport-google-oauth20` handles the OAuth2 PKCE handshake with Google,
- *      so we only need to write the database logic for what happens after authentication.
+ * CHANGE IN CASE C:
+ *   Previously: auto-created account with role='fleet_manager'
+ *   Now: signals { needsRoleSelection: true, googleProfile: {...} }
+ *        so the controller can redirect to the role-selection page.
  *
- * HOW IT WORKS:
- *   1. Google calls our callback with the user's profile after they consent.
- *   2. We check the DB for 3 cases:
- *      Case A — google_id exists          → returning Google user, log in
- *      Case B — email exists, provider=local → reject (prevent account spoofing)
- *      Case C — email not found           → auto-create new account (role: fleet_manager)
- *   3. We call done(null, user) — Passport attaches user to req.user.
- *   4. The controller then generates a JWT (same generateToken() as local login).
+ *   WHY: Users should choose their own role (Fleet Manager, Driver, etc.)
+ *        rather than having it hard-coded. This is critical for a multi-role
+ *        fleet platform where the role determines what data you can see/edit.
  *
- * SECURITY:
- *   - We trust Google's ID token — email_verified is implicitly true for OAuth2.
- *   - google_id is the canonical identifier (email can theoretically change).
- *   - provider field prevents hijacking a local account via Google OAuth.
+ * Cases A and B are UNCHANGED.
  */
 
 const passport = require('passport');
@@ -66,7 +59,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
               user.profile_picture = profilePicture;
             }
 
-            console.log(`✅ Google OAuth: Returning user logged in — ${email}`);
+            console.log(`✅ Google OAuth: Returning user logged in — ${email} (role: ${user.role})`);
             return done(null, user);
           }
 
@@ -90,19 +83,17 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           }
 
           // ─────────────────────────────────────────────
-          // CASE C: New user — auto-register
+          // CASE C: New user — do NOT create yet.
+          //         Signal role selection is needed.
           // ─────────────────────────────────────────────
-          const newUserResult = await query(
-            `INSERT INTO users
-              (name, email, password_hash, role, provider, google_id, profile_picture, is_active)
-             VALUES ($1, $2, NULL, 'fleet_manager', 'google', $3, $4, TRUE)
-             RETURNING id, name, email, role, provider, google_id, profile_picture, is_active`,
-            [name, email, googleId, profilePicture]
-          );
-
-          const newUser = newUserResult.rows[0];
-          console.log(`✅ Google OAuth: New user registered — ${email} (role: fleet_manager)`);
-          return done(null, newUser);
+          // We pass a special marker instead of a real user object.
+          // The googleCallback controller will detect this and redirect
+          // to the role-selection page with a short-lived pending token.
+          console.log(`🔄 Google OAuth: New user — role selection required — ${email}`);
+          return done(null, {
+            needsRoleSelection: true,
+            googleProfile: { googleId, email, name, profilePicture },
+          });
 
         } catch (err) {
           console.error('❌ Google OAuth strategy error:', err);
@@ -115,9 +106,9 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   console.warn('⚠️  Google Client ID / Client Secret not found in .env. Google login option is disabled.');
 }
 
-// Passport serialize/deserialize — only needed for session (we use JWT, not sessions)
-// We still need these stubs because passport.initialize() expects them
-passport.serializeUser((user, done) => done(null, user.id));
+// Passport serialize/deserialize stubs — required by passport.initialize()
+// We use JWT not sessions, so these are minimal no-ops
+passport.serializeUser((user, done) => done(null, user.id || 'pending'));
 passport.deserializeUser((id, done) => done(null, { id }));
 
 module.exports = passport;
