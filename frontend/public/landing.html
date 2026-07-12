@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>TransitOps — Smart Transport Operations Platform</title>
+<meta name="description" content="One platform to run your entire fleet. Digitize vehicle, driver, trip dispatch, maintenance and expense management with automated rules and live KPIs."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="landing.css"/>
+</head>
+<body>
+
+<!-- ══════════════════ LOADER ══════════════════ -->
+<div id="loader">
+  <div class="loader-brand">
+    <div class="logo-text">🚛 TransitOps</div>
+    <p>Smart Transport Operations Platform</p>
+  </div>
+  <div class="road-scene">
+    <!-- City skyline SVG -->
+    <svg class="skyline" viewBox="0 0 1440 120" preserveAspectRatio="none" fill="#131022" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0"   y="60"  width="40"  height="60"/>
+      <rect x="30"  y="30"  width="50"  height="90"/>
+      <rect x="70"  y="50"  width="35"  height="70"/>
+      <rect x="120" y="20"  width="60"  height="100"/>
+      <rect x="170" y="45"  width="30"  height="75"/>
+      <rect x="210" y="10"  width="80"  height="110"/>
+      <rect x="280" y="55"  width="40"  height="65"/>
+      <rect x="330" y="35"  width="55"  height="85"/>
+      <rect x="400" y="15"  width="70"  height="105"/>
+      <rect x="460" y="50"  width="35"  height="70"/>
+      <rect x="500" y="30"  width="50"  height="90"/>
+      <rect x="560" y="60"  width="40"  height="60"/>
+      <rect x="610" y="25"  width="65"  height="95"/>
+      <rect x="680" y="5"   width="90"  height="115"/>
+      <rect x="760" y="40"  width="45"  height="80"/>
+      <rect x="815" y="20"  width="60"  height="100"/>
+      <rect x="880" y="55"  width="38"  height="65"/>
+      <rect x="928" y="15"  width="75"  height="105"/>
+      <rect x="1010" y="45" width="42"  height="75"/>
+      <rect x="1060" y="30" width="55"  height="90"/>
+      <rect x="1120" y="10" width="80"  height="110"/>
+      <rect x="1200" y="50" width="35"  height="70"/>
+      <rect x="1245" y="25" width="65"  height="95"/>
+      <rect x="1320" y="40" width="50"  height="80"/>
+      <rect x="1380" y="5"  width="60"  height="115"/>
+    </svg>
+
+    <!-- Animated truck -->
+    <div class="truck-wrap">
+      <svg class="truck-svg" viewBox="0 0 160 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Headlight glow -->
+        <ellipse cx="152" cy="28" rx="10" ry="6" fill="rgba(255, 62, 65, 0.25)"/>
+        <!-- Body -->
+        <rect x="30" y="10" width="120" height="32" rx="4" fill="#131022" stroke="#FF3E41" stroke-width="1.2"/>
+        <!-- Cab -->
+        <rect x="120" y="6"  width="36" height="36" rx="4" fill="#060315" stroke="#FF3E41" stroke-width="1.2"/>
+        <!-- Window -->
+        <rect x="128" y="12" width="20" height="14" rx="2" fill="rgba(81, 207, 237, 0.25)" stroke="#51CFED" stroke-width=".8"/>
+        <!-- Headlight -->
+        <rect x="153" y="24" width="5"  height="6"  rx="1" fill="#FF3E41"/>
+        <!-- Grille lines -->
+        <line x1="124" y1="30" x2="154" y2="30" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <line x1="124" y1="34" x2="154" y2="34" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <!-- Exhaust pipe -->
+        <rect x="118" y="5" width="5" height="10" rx="1" fill="#334155"/>
+        <!-- Wheels -->
+        <g class="wheel">
+          <circle cx="55"  cy="44" r="10" fill="#060315" stroke="#FF3E41" stroke-width="1.5"/>
+          <circle cx="55"  cy="44" r="4"  fill="#131022"/>
+          <line x1="55" y1="38" x2="55" y2="50" stroke="#FF3E41" stroke-width="1"/>
+          <line x1="49" y1="44" x2="61" y2="44" stroke="#FF3E41" stroke-width="1"/>
+        </g>
+        <g class="wheel">
+          <circle cx="90"  cy="44" r="10" fill="#060315" stroke="#FF3E41" stroke-width="1.5"/>
+          <circle cx="90"  cy="44" r="4"  fill="#131022"/>
+          <line x1="90" y1="38" x2="90" y2="50" stroke="#FF3E41" stroke-width="1"/>
+          <line x1="84" y1="44" x2="96" y2="44" stroke="#FF3E41" stroke-width="1"/>
+        </g>
+        <g class="wheel">
+          <circle cx="135" cy="44" r="10" fill="#060315" stroke="#FF3E41" stroke-width="1.5"/>
+          <circle cx="135" cy="44" r="4"  fill="#131022"/>
+          <line x1="135" y1="38" x2="135" y2="50" stroke="#FF3E41" stroke-width="1"/>
+          <line x1="129" y1="44" x2="141" y2="44" stroke="#FF3E41" stroke-width="1"/>
+        </g>
+        <!-- Speed particles -->
+        <g class="particles">
+          <circle class="p" cx="20" cy="28" r="2" fill="#51CFED"/>
+          <circle class="p" cx="12" cy="32" r="2" fill="#51CFED"/>
+          <circle class="p" cx="4"  cy="26" r="2" fill="#51CFED"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="road-line"></div>
+    <div class="road-dots">
+      <!-- 20 dashes for the dotted center line -->
+      <div class="road-dot"></div><div class="road-dot"></div><div class="road-dot"></div>
+      <div class="road-dot"></div><div class="road-dot"></div><div class="road-dot"></div>
+      <div class="road-dot"></div><div class="road-dot"></div><div class="road-dot"></div>
+      <div class="road-dot"></div><div class="road-dot"></div><div class="road-dot"></div>
+      <div class="road-dot"></div><div class="road-dot"></div><div class="road-dot"></div>
+      <div class="road-dot"></div><div class="road-dot"></div><div class="road-dot"></div>
+      <div class="road-dot"></div><div class="road-dot"></div>
+    </div>
+  </div>
+  <div class="progress-bar"></div>
+</div>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div id="main">
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <span class="logo-icon">🚛</span>
+    <span>TransitOps</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#roles">Roles</a></li>
+    <li><a href="#stats">Stats</a></li>
+  </ul>
+  <div class="nav-ctas">
+    <a href="/login" class="btn-ghost">Login →</a>
+    <a href="/login?mode=register" class="btn-primary">Get Started ✦</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="dot-grid"></div>
+    <div class="hero-glow"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="pulse-dot"></span>
+      ⚡ Built in 8 Hours · Hackathon Sprint
+    </div>
+    <h1 class="hero-title">
+      One Platform to Run<br/>Your Entire <span class="accent">Fleet.</span>
+    </h1>
+    <p class="hero-sub">
+      Stop managing logistics in spreadsheets. TransitOps gives fleet managers, drivers, and analysts a single source of truth — with automated rules, live status, and zero double-booking.
+    </p>
+    <div class="hero-ctas">
+      <a href="/login?mode=register" class="btn-cta-primary">Get Started →</a>
+      <a href="#features" class="btn-cta-ghost">Explore Features ↓</a>
+    </div>
+    <div class="trust-badges">
+      <span class="badge"><span class="badge-icon">🛡️</span> RBAC Protected</span>
+      <span class="badge"><span class="badge-icon">⚡</span> Auto Status Rules</span>
+      <span class="badge"><span class="badge-icon">📊</span> Real-Time KPIs</span>
+      <span class="badge"><span class="badge-icon">🚛</span> Full Trip Lifecycle</span>
+    </div>
+  </div>
+
+  <!-- Floating mockup -->
+  <div class="hero-visual">
+    <div class="mockup-card">
+      <div class="mockup-header">
+        <h3>📊 Fleet Dashboard</h3>
+        <span class="live-dot">LIVE</span>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-tile">
+          <div class="kpi-label">Active Vehicles</div>
+          <div class="kpi-value blue">6</div>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Active Trips</div>
+          <div class="kpi-value cyan">3</div>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Fleet Utilization</div>
+          <div class="kpi-value green">71%</div>
+        </div>
+        <div class="kpi-tile">
+          <div class="kpi-label">Drivers On Duty</div>
+          <div class="kpi-value amber">4</div>
+        </div>
+      </div>
+      <div class="status-table">
+        <div class="status-row">
+          <span class="status-veh">🚛 Titan Hauler · TRK-001</span>
+          <span class="status-badge s-available">Available</span>
+        </div>
+        <div class="status-row">
+          <span class="status-veh">🚐 Swift Cargo · VAN-002</span>
+          <span class="status-badge s-ontrip">On Trip</span>
+        </div>
+        <div class="status-row">
+          <span class="status-veh">🚚 Iron Horse · TRK-003</span>
+          <span class="status-badge s-inshop">In Shop</span>
+        </div>
+        <div class="status-row">
+          <span class="status-veh">🚗 Alex Johnson · Driver</span>
+          <span class="status-badge s-suspended">Suspended</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BANNER -->
+<div id="stats">
+  <div class="stat-item reveal">
+    <div class="stat-icon">🚛</div>
+    <div class="stat-num" data-target="4" data-suffix="">0</div>
+    <div class="stat-label">User Roles</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-icon">⚙️</div>
+    <div class="stat-num" data-target="10" data-suffix="">0</div>
+    <div class="stat-label">Business Rules Enforced</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-icon">📦</div>
+    <div class="stat-num" data-target="8" data-suffix="">0</div>
+    <div class="stat-label">Core Modules</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-icon">📊</div>
+    <div class="stat-num" data-target="7" data-suffix="">0</div>
+    <div class="stat-label">KPI Tiles Live</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-header reveal">
+    <div class="section-tag">Core Modules</div>
+    <h2 class="section-title">Everything Your Fleet Operations Need</h2>
+    <p class="section-sub">From vehicle registration to trip completion — every workflow automated and rule-enforced.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <h3>Live Operations Dashboard</h3>
+      <p>Real-time KPIs: active vehicles, trips in motion, fleet utilization %, and drivers on duty — all in one glance.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🚗</div>
+      <h3>Vehicle Registry & Status</h3>
+      <p>Manage your full fleet with automatic status transitions — Available, On Trip, In Shop, or Retired — enforced by the system.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🧑‍✈️</div>
+      <h3>Driver Management</h3>
+      <p>Track driver profiles, license validity, safety scores, and availability. Expired-license or suspended drivers are auto-blocked.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🗺️</div>
+      <h3>Trip Dispatch & Lifecycle</h3>
+      <p>Create and dispatch trips with source, destination, cargo weight, and auto-validation. Full lifecycle: Draft → Dispatched → Completed → Cancelled.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔧</div>
+      <h3>Maintenance Tracking</h3>
+      <p>Log maintenance records per vehicle. The system auto-pulls vehicles into "In Shop" status, removing them from the dispatch pool instantly.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">⛽</div>
+      <h3>Fuel & Expense Logs</h3>
+      <p>Track fuel consumption, costs, tolls, and operational expenses. Auto-calculates total operational cost per vehicle for reporting.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-header reveal">
+    <div class="section-tag">Workflow</div>
+    <h2 class="section-title">Zero Spreadsheets. Fully Automated.</h2>
+    <p class="section-sub">Three steps from fleet chaos to complete operational control.</p>
+  </div>
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon-wrap">🚗</div>
+      <h3>Register Assets</h3>
+      <p>Add your vehicles and driver profiles with compliance rules, license categories, and capacity constraints.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon-wrap">🗺️</div>
+      <h3>Dispatch Trips</h3>
+      <p>Create and validate trips in seconds — business rules auto-enforced. No double-booking, no overloaded vehicles.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon-wrap">📊</div>
+      <h3>Track & Report</h3>
+      <p>Monitor KPIs, export CSV/PDF reports, and stay in full control with a live audit trail of every operation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section id="roles">
+  <div class="section-header reveal">
+    <div class="section-tag">Access Control</div>
+    <h2 class="section-title">Built for Every Person in Your Operation</h2>
+    <p class="section-sub">Role-Based Access Control ensures each team member sees exactly what they need.</p>
+  </div>
+  <div class="roles-grid">
+    <div class="role-card blue-role">
+      <span class="role-pill blue">Role Access</span>
+      <span class="role-emoji">🚦</span>
+      <h3>Fleet Manager</h3>
+      <ul>
+        <li>Vehicle Registry</li>
+        <li>Maintenance Records</li>
+        <li>Operations Dashboard</li>
+        <li>User Management</li>
+      </ul>
+    </div>
+    <div class="role-card cyan-role">
+      <span class="role-pill cyan">Role Access</span>
+      <span class="role-emoji">🧑‍✈️</span>
+      <h3>Driver / Dispatcher</h3>
+      <ul>
+        <li>Trip Creation</li>
+        <li>Vehicle Assignment</li>
+        <li>Active Deliveries</li>
+        <li>Trip Lifecycle</li>
+      </ul>
+    </div>
+    <div class="role-card amber-role">
+      <span class="role-pill amber">Role Access</span>
+      <span class="role-emoji">🛡️</span>
+      <h3>Safety Officer</h3>
+      <ul>
+        <li>Driver Profiles</li>
+        <li>License Expiry Alerts</li>
+        <li>Safety Scores</li>
+        <li>Compliance Reports</li>
+      </ul>
+    </div>
+    <div class="role-card green-role">
+      <span class="role-pill green">Role Access</span>
+      <span class="role-emoji">💰</span>
+      <h3>Financial Analyst</h3>
+      <ul>
+        <li>Fuel & Expense Logs</li>
+        <li>Operational Cost Reports</li>
+        <li>Vehicle ROI Analytics</li>
+        <li>CSV / PDF Export</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- RULES TICKER -->
+<section id="rules">
+  <div class="rules-header reveal">
+    <div class="section-tag">Business Rules Engine</div>
+    <h2 class="section-title">10 Ironclad Rules. Zero Manual Enforcement.</h2>
+  </div>
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <!-- Duplicated for seamless loop -->
+      <span class="tick-item"><span class="tick-check">✅</span> No double-booking vehicles or drivers <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Expired license = blocked from dispatch <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Cargo weight validated against vehicle capacity <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Maintenance auto-locks vehicle from trips <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Trip completion auto-restores driver & vehicle availability <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Retired vehicles excluded from dispatch forever <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Suspended drivers cannot be assigned to any trip <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Unique registration numbers enforced system-wide <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Cancelling trip restores vehicle & driver instantly <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Closing maintenance restores vehicle to Available <span class="tick-sep">✦</span></span>
+      <!-- Duplicate -->
+      <span class="tick-item"><span class="tick-check">✅</span> No double-booking vehicles or drivers <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Expired license = blocked from dispatch <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Cargo weight validated against vehicle capacity <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Maintenance auto-locks vehicle from trips <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Trip completion auto-restores driver & vehicle availability <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Retired vehicles excluded from dispatch forever <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Suspended drivers cannot be assigned to any trip <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Unique registration numbers enforced system-wide <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Cancelling trip restores vehicle & driver instantly <span class="tick-sep">✦</span></span>
+      <span class="tick-item"><span class="tick-check">✅</span> Closing maintenance restores vehicle to Available <span class="tick-sep">✦</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">🚛 TransitOps</div>
+      <p>Replacing spreadsheets with smart, rule-enforced fleet operations.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#roles">Roles</a>
+      <a href="#how">How It Works</a>
+      <a href="/login">Login</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    Built with ⚡ during an 8-hour hackathon sprint &nbsp;·&nbsp; MIT License &nbsp;·&nbsp; TransitOps Team
+  </div>
+</footer>
+
+</div><!-- #main -->
+
+<script src="landing.js"></script>
+</body>
+</html>
