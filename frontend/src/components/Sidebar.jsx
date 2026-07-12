@@ -63,7 +63,7 @@ export default function Sidebar() {
     <aside className="logistica-sidebar">
       <div className="logistica-sidebar-logo">
         <Zap size={28} color="var(--logistica-primary)" strokeWidth={2.5} />
-        <h2>Logistica</h2>
+        <h2>TransitOps</h2>
       </div>
 
       <nav className="logistica-nav">

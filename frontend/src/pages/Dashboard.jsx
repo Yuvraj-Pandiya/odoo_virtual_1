@@ -85,7 +85,7 @@ export default function Dashboard() {
     <div>
       <div className="page-banner" style={{ backgroundImage: 'url(/img/carousel-1.jpg)' }}>
         <div className="page-banner-content">
-          <h2>Welcome to Logistica Dashboard</h2>
+          <h2>Welcome to TransitOps Dashboard</h2>
           <p>Monitor your fleet's operations, performance, and key metrics in real-time.</p>
         </div>
       </div>

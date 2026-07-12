@@ -17,7 +17,7 @@ const pageTitles = {
 export default function Header() {
   const location = useLocation();
   const { user } = useAuth();
-  const page = pageTitles[location.pathname] || { title: 'Logistica', subtitle: '' };
+  const page = pageTitles[location.pathname] || { title: 'TransitOps', subtitle: '' };
   const now = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
   const [isDark, setIsDark] = useState(() => {
