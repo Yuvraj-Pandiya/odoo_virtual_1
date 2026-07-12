@@ -69,7 +69,7 @@ const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
+    const validRoles = ['fleet_manager', 'dispatcher', 'safety_officer', 'financial_analyst'];
     if (!name || !email || !password || !role) {
       return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
@@ -136,7 +136,7 @@ const updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
-    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
+    const validRoles = ['fleet_manager', 'dispatcher', 'safety_officer', 'financial_analyst'];
 
     if (!role || !validRoles.includes(role)) {
       return res.status(400).json({ success: false, message: 'Invalid role.' });
