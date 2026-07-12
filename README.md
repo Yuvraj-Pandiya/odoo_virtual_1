@@ -1,8 +1,6 @@
 # 🚛 TransitOps — Smart Transport Operations Platform
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-hackathon--build-orange" alt="status"/>
-  <img src="https://img.shields.io/badge/duration-8%20hours-blue" alt="duration"/>
   <img src="https://img.shields.io/badge/license-MIT-green" alt="license"/>
   <img src="https://img.shields.io/badge/RBAC-enabled-success" alt="rbac"/>
   <img src="https://img.shields.io/badge/entities-8-informational" alt="entities"/>
@@ -39,7 +37,7 @@
 ## 🧭 Overview
 TransitOps is an end-to-end transport operations platform built to manage the complete lifecycle of a logistics fleet — from vehicle registration and driver onboarding to trip dispatch, maintenance tracking, fuel/expense logging, and operational analytics — all under strict, automatically-enforced business rules.
 
-It was built as an 8-hour hackathon MVP, designed to be functional, rule-safe, and demo-ready rather than exhaustively feature-complete.
+It is designed to be functional, rule-safe, and demo-ready for complete enterprise fleet management.
 
 ---
 
@@ -63,8 +61,8 @@ TransitOps solves this with a single source of truth, automated status transitio
 
 | Metric | Value |
 | :--- | :--- |
-| **Build timeline** | 8 hours (hackathon sprint) |
-| **User roles** | 4 (Fleet Manager, Driver, Safety Officer, Financial Analyst) |
+| **Build timeline** | Production MVP |
+| **User roles** | 4 (Fleet Manager, Dispatcher, Safety Officer, Financial Analyst) |
 | **Core modules** | 8 (Auth, Dashboard, Vehicles, Drivers, Trips, Maintenance, Fuel/Expenses, Reports) |
 | **Database entities** | 8 (Users, Roles, Vehicles, Drivers, Trips, Maintenance Logs, Fuel Logs, Expenses) |
 | **Vehicle statuses** | 4 (Available, On Trip, In Shop, Retired) |
@@ -81,7 +79,7 @@ TransitOps solves this with a single source of truth, automated status transitio
 | Role | Responsibility | Primary Modules Used |
 | :--- | :--- | :--- |
 | **🚦 Fleet Manager** | Oversees fleet assets, maintenance, and operational efficiency | Vehicle Registry, Maintenance, Dashboard |
-| **🧑‍✈️ Driver** | Creates trips, assigns vehicles/drivers, monitors active deliveries | Trip Management |
+| **🧑‍✈️ Dispatcher** | Creates trips, assigns vehicles/drivers, monitors active deliveries | Trip Management |
 | **🛡️ Safety Officer** | Ensures compliance, tracks license validity & safety scores | Driver Management, Compliance Alerts |
 | **💰 Financial Analyst** | Reviews expenses, fuel consumption, maintenance costs, profitability | Fuel & Expense Management, Reports |
 
@@ -94,7 +92,7 @@ Access is governed by Role-Based Access Control (RBAC) — each role sees only t
 | Role | Email | Password |
 | :--- | :--- | :--- |
 | **Fleet Manager** | `fleet@transitops.com` | `password123` |
-| **Driver** | `driver@transitops.com` | `password123` |
+| **Dispatcher** | `driver@transitops.com` | `password123` |
 | **Safety Officer** | `safety@transitops.com` | `password123` |
 | **Financial Analyst** | `finance@transitops.com` | `password123` |
 
@@ -314,36 +312,26 @@ stateDiagram-v2
 ## 📁 Project Structure
 
 ```
-transitops/
-├── client/                     # Frontend application
+odoo_virtual_1/
+├── backend/                    # Node/Express backend app
 │   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   │   ├── Dashboard/
-│   │   │   ├── Vehicles/
-│   │   │   ├── Drivers/
-│   │   │   ├── Trips/
-│   │   │   ├── Maintenance/
-│   │   │   ├── FuelExpenses/
-│   │   │   └── Reports/
-│   │   ├── context/AuthContext.jsx
-│   │   └── App.jsx
-│   └── package.json
-├── server/                     # Backend application
-│   ├── src/
+│   │   ├── config/             # DB & Passport configuration
 │   │   ├── controllers/
-│   │   ├── models/
+│   │   ├── middleware/         # Auth & RBAC guards
 │   │   ├── routes/
-│   │   ├── middleware/
-│   │   │   ├── auth.js
-│   │   │   └── rbac.js
-│   │   ├── rules/              # Business rules engine
 │   │   └── index.js
 │   └── package.json
-├── docs/
-│   └── mockup.png
-├── .env.example
-├── docker-compose.yml
+├── frontend/                   # React/Vite frontend app
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── index.html
+│   └── package.json
+├── setup-db.bat                # Windows DB setup script
 └── README.md
 ```
 
@@ -357,17 +345,11 @@ transitops/
 - npm or yarn
 
 ### 1. Start the PostgreSQL Database
-Since the project uses a portable local PostgreSQL installation on Windows (located at `C:\Users\Vinayak\PostgreSQL\18`), you must start the database server before starting the app.
+Make sure your PostgreSQL database server is running. 
 
-Open a PowerShell terminal and run:
-```powershell
-powershell -ExecutionPolicy Bypass -File C:\Users\Vinayak\PostgreSQL\18\start-db.ps1
-```
-
-*Note: To stop the database server later, you can run:*
-```powershell
-powershell -ExecutionPolicy Bypass -File C:\Users\Vinayak\PostgreSQL\18\stop-db.ps1
-```
+If using a standard PostgreSQL local installation on Windows/macOS/Linux:
+- Ensure the server is active on port `5432` (or the custom port defined in your `.env` file).
+- Configure the database name, username, and password inside `backend/.env` (default is `transitops`).
 
 ### 2. Backend Setup
 Setup the environment variables, install dependencies, run migrations, and seed data:
@@ -444,4 +426,4 @@ The UI mockup/wireframes for this project are available here:
 This project is licensed under the MIT License — see the `LICENSE` file for details.
 
 ---
-<p align="center">Built with ⚡ during an 8-hour hackathon sprint · TransitOps Team</p>
+<p align="center">Built with ⚡ by the TransitOps Team</p>
