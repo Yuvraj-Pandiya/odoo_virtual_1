@@ -21,7 +21,8 @@ export default function Header() {
   const now = new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
   const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
+    const stored = localStorage.getItem('theme');
+    return stored === null ? true : stored === 'dark';
   });
 
   useEffect(() => {

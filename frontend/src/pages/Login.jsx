@@ -36,6 +36,16 @@ export default function LoginPage() {
   const [mode, setMode] = useState(initialMode);
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'dispatcher' });
 
+  // Sync theme with localStorage (defaults to dark)
+  useEffect(() => {
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    if (currentTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  }, []);
+
   useEffect(() => {
     if (searchParams.get('mode') === 'register') {
       setMode('register');
