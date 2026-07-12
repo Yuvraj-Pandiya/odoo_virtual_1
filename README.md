@@ -416,8 +416,8 @@ The UI mockup/wireframes for this project are available here:
 
 > Add exported screenshots to `docs/` and embed them below once available:
 > ```md
-> ![Dashboard Screenshot](docs/dashboard.png)
-> ![Trip Management Screenshot](docs/trips.png)
+> ![Dashboard Screenshot]([docs/dashboard.png](https://drive.google.com/file/d/16OIue-Gn_Tfx1f5A63X7iLFpFDci9TNQ/view))
+> ![Trip Management Screenshot]([docs/trips.png](https://drive.google.com/file/d/1oqr3GP6sCa43y9ZHAkpTYYu7kMLRM1QF/view))
 > ```
 
 ---
