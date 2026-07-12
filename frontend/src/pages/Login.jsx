@@ -51,7 +51,7 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     setGoogleLoading(true);
     setError('');
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = `http://localhost:5000/api/auth/google?role=${form.role}`;
   };
 
   const handleSignIn = async (e) => {
@@ -218,6 +218,19 @@ export default function LoginPage() {
                 <div style={{ flex: 1, height: 1, background: 'var(--border-color)', opacity: 0.3 }} />
                 <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>or continue with</span>
                 <div style={{ flex: 1, height: 1, background: 'var(--border-color)', opacity: 0.3 }} />
+              </div>
+              
+              <div className="form-group" style={{ marginBottom: '12px' }}>
+                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Role for Google Login</label>
+                <select
+                  className="logistica-input"
+                  value={form.role}
+                  onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+                >
+                  {ROLES.map(r => (
+                    <option key={r.value} value={r.value}>{r.label}</option>
+                  ))}
+                </select>
               </div>
               <button
                 id="google-login-btn"

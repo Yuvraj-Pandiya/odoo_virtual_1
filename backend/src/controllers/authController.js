@@ -69,7 +69,7 @@ const register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    const validRoles = ['fleet_manager', 'dispatcher', 'safety_officer', 'financial_analyst'];
+    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
     if (!name || !email || !password || !role) {
       return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
@@ -136,7 +136,7 @@ const updateUserRole = async (req, res) => {
   try {
     const { id } = req.params;
     const { role } = req.body;
-    const validRoles = ['fleet_manager', 'dispatcher', 'safety_officer', 'financial_analyst'];
+    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
 
     if (!role || !validRoles.includes(role)) {
       return res.status(400).json({ success: false, message: 'Invalid role.' });
@@ -244,57 +244,31 @@ const changePassword = async (req, res) => {
 /**
  * GET /api/auth/google/callback — Google OAuth2 callback handler
  * ---------------------------------------------------------------
- * TWO PATHS based on what Passport returned:
+ * WHY: After Passport successfully authenticates the Google user (all 3 cases handled
+ *      in config/passport.js), this controller:
+ *       1. Generates a JWT using the SAME generateToken() as local login.
+ *       2. Redirects the BROWSER (not axios) to the React callback page.
+ *       3. Passes token + user as URL query params (base64-encoded for safety).
  *
- * PATH 1 — Existing Google user (Case A):
- *   req.user = { id, name, email, role, ... } — a real DB user
- *   → Generate JWT → redirect to /auth/callback (OAuthCallback.jsx)
+ * HOW THE TOKEN REACHES REACT:
+ *   Browser redirect → /auth/callback?token=JWT&user=BASE64_JSON
+ *   OAuthCallback.jsx reads the URL params → saves to localStorage → navigates to /dashboard.
  *
- * PATH 2 — New user needs role selection (Case C):
- *   req.user = { needsRoleSelection: true, googleProfile: {...} }
- *   → Generate a SHORT-LIVED 'pending' JWT (10 min, type='pending_google_signup')
- *   → Redirect to /auth/select-role?pending=PENDING_JWT
- *   → React shows role picker → user submits role
- *   → POST /api/auth/google/complete-signup creates the real account
- *
- * PATH 3 — Passport rejected (Case B / disabled):
- *   req.user = undefined → redirect to /login?error=...
+ * ERROR HANDLING:
+ *   If Passport fails (Case B — local account conflict), req.user is undefined.
+ *   We redirect to /login?error=local_account_exists so the UI can show the message.
  */
 const googleCallback = (req, res) => {
   try {
     if (!req.user) {
+      // Passport rejected the user (Case B or disabled account)
       const message = encodeURIComponent(
-        req.authInfo?.message || 'Google authentication failed. Please try again.'
+        req.authInfo?.message ||
+        'Google authentication failed. Please try again.'
       );
       return res.redirect(`${process.env.FRONTEND_URL}/login?error=${message}`);
     }
 
-    // PATH 2: New user — needs to pick a role first
-    if (req.user.needsRoleSelection) {
-      const { googleId, email, name, profilePicture } = req.user.googleProfile;
-
-      // Short-lived pending token — NOT a real auth token
-      // Contains Google profile data so the complete-signup endpoint
-      // doesn't need a session to remember who the user is
-      const pendingToken = jwt.sign(
-        {
-          type: 'pending_google_signup', // distinguishes from real JWT
-          googleId,
-          email,
-          name,
-          profilePicture,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: '10m' } // expires in 10 minutes — short on purpose
-      );
-
-      console.log(`🔀 Google OAuth: Redirecting new user to role selection — ${email}`);
-      return res.redirect(
-        `${process.env.FRONTEND_URL}/auth/select-role?pending=${pendingToken}`
-      );
-    }
-
-    // PATH 1: Existing returning Google user — generate real JWT
     const token = generateToken(req.user);
     const userPayload = Buffer.from(
       JSON.stringify({
@@ -306,6 +280,7 @@ const googleCallback = (req, res) => {
       })
     ).toString('base64');
 
+    // Redirect browser to React callback route with JWT embedded in URL
     res.redirect(
       `${process.env.FRONTEND_URL}/auth/callback?token=${token}&user=${userPayload}`
     );
@@ -315,111 +290,4 @@ const googleCallback = (req, res) => {
   }
 };
 
-/**
- * POST /api/auth/google/complete-signup
- * ----------------------------------------
- * WHY: Called by the RoleSelection.jsx page after the user picks their role.
- *      Verifies the pending token (proving Google did authenticate them),
- *      validates the chosen role, then creates the real account and returns a JWT.
- *
- * BODY: { pending_token: string, role: string }
- *
- * SECURITY:
- *   - Verifies JWT signature + expiry (10 min window)
- *   - Checks type === 'pending_google_signup' (can't use a real auth JWT here)
- *   - Re-checks email doesn't exist (prevents race conditions)
- *   - Role must be one of the 4 valid values
- */
-const googleCompleteSignup = async (req, res) => {
-  try {
-    const { pending_token, role } = req.body;
-
-    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
-    if (!pending_token || !role) {
-      return res.status(400).json({ success: false, message: 'pending_token and role are required.' });
-    }
-    if (!validRoles.includes(role)) {
-      return res.status(400).json({ success: false, message: 'Invalid role selected.' });
-    }
-
-    // Verify and decode the pending token
-    let decoded;
-    try {
-      decoded = jwt.verify(pending_token, process.env.JWT_SECRET);
-    } catch (err) {
-      if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({
-          success: false,
-          message: 'Your session expired. Please sign in with Google again.',
-        });
-      }
-      return res.status(401).json({ success: false, message: 'Invalid session token.' });
-    }
-
-    // Guard: must be a pending signup token, not a regular user JWT
-    if (decoded.type !== 'pending_google_signup') {
-      return res.status(401).json({ success: false, message: 'Invalid token type.' });
-    }
-
-    const { googleId, email, name, profilePicture } = decoded;
-
-    // Race condition check: user might have been created by another request
-    const existing = await query(
-      'SELECT id, provider FROM users WHERE email = $1 OR google_id = $2',
-      [email, googleId]
-    );
-    if (existing.rows.length > 0) {
-      const u = existing.rows[0];
-      if (u.provider === 'local') {
-        return res.status(409).json({
-          success: false,
-          message: 'This email is already registered with email/password. Please sign in normally.',
-        });
-      }
-      // Already created (duplicate submit) — just return their JWT
-      const existingUser = (await query(
-        'SELECT id, name, email, role, profile_picture FROM users WHERE id = $1',
-        [u.id]
-      )).rows[0];
-      const token = generateToken(existingUser);
-      return res.json({
-        success: true,
-        message: 'Account already exists. Logging you in.',
-        token,
-        user: { id: existingUser.id, name: existingUser.name, email: existingUser.email, role: existingUser.role, profile_picture: existingUser.profile_picture },
-      });
-    }
-
-    // Create the new Google user with the chosen role
-    const result = await query(
-      `INSERT INTO users
-        (name, email, password_hash, role, provider, google_id, profile_picture, is_active)
-       VALUES ($1, $2, NULL, $3, 'google', $4, $5, TRUE)
-       RETURNING id, name, email, role, profile_picture`,
-      [name, email, role, googleId, profilePicture]
-    );
-
-    const newUser = result.rows[0];
-    const token = generateToken(newUser);
-
-    console.log(`✅ Google OAuth: New user created — ${email} (role: ${role})`);
-
-    res.status(201).json({
-      success: true,
-      message: 'Account created successfully!',
-      token,
-      user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-        profile_picture: newUser.profile_picture,
-      },
-    });
-  } catch (err) {
-    console.error('Google complete-signup error:', err);
-    res.status(500).json({ success: false, message: 'Internal server error.' });
-  }
-};
-
-module.exports = { login, register, getMe, getUsers, updateUserRole, updateUserStatus, updateProfile, changePassword, googleCallback, googleCompleteSignup };
+module.exports = { login, register, getMe, getUsers, updateUserRole, updateUserStatus, updateProfile, changePassword, googleCallback };

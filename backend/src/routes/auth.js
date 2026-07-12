@@ -22,7 +22,7 @@ const passport = require('passport');
 const {
   login, register, getMe, getUsers,
   updateUserRole, updateUserStatus, updateProfile, changePassword,
-  googleCallback, googleCompleteSignup,
+  googleCallback,
 } = require('../controllers/authController');
 const { authenticate } = require('../middleware/auth');
 const { authorize } = require('../middleware/rbac');
@@ -47,6 +47,11 @@ router.put('/change-password', authenticate, changePassword);
  * scope: 'profile' gives us name + photo, 'email' gives us the email address.
  */
 router.get('/google',
+  (req, res, next) => {
+    // Store the requested role in the session so we can retrieve it after Google redirects back
+    req.session.oauthRole = req.query.role || 'fleet_manager';
+    next();
+  },
   passport.authenticate('google', {
     scope: ['profile', 'email'],
     prompt: 'select_account', // Always show account picker (even if already signed in)
@@ -62,21 +67,21 @@ router.get('/google',
  * `passReqToCallback: true` is set in passport config so req.authInfo carries
  * the rejection message from the strategy's done(null, false, { message }) call.
  */
-router.get('/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: `${process.env.FRONTEND_URL}/login?error=google_auth_failed`,
-    session: false, // We use JWT, not sessions — no need to persist user in session
-    passReqToCallback: true,
-  }),
-  googleCallback
-);
-
-/**
- * POST /api/auth/google/complete-signup
- * Called by RoleSelection.jsx after user picks their role.
- * The pending_token (from URL param) proves Google authenticated them.
- * No auth middleware needed — the pending JWT is the identity proof.
- */
-router.post('/google/complete-signup', googleCompleteSignup);
+router.get('/google/callback', (req, res, next) => {
+  passport.authenticate('google', { session: false }, (err, user, info) => {
+    if (err) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent('Internal server error during authentication.')}`);
+    }
+    if (!user) {
+      // info.message contains the custom message from our strategy's done(null, false, { message: ... })
+      const errorMessage = info?.message || 'Authentication failed.';
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(errorMessage)}`);
+    }
+    
+    // Success — attach user to req and proceed to the googleCallback controller
+    req.user = user;
+    next();
+  })(req, res, next);
+}, googleCallback);
 
 module.exports = router;
