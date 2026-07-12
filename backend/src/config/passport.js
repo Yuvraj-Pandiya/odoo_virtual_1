@@ -66,8 +66,8 @@ passport.use(
           const selectedRole = req.session.oauthRole;
           if (selectedRole && selectedRole !== user.role) {
             // The user selected a different role than the one they registered with
-            return done(null, false, { 
-              message: `You are already registered as a ${user.role.replace('_', ' ')}. Please select the correct role to sign in.` 
+            return done(null, false, {
+              message: `You are already registered as a ${user.role.replace('_', ' ')}. Please select the correct role to sign in.`
             });
           }
 

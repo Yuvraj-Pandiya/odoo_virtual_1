@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -54,11 +55,16 @@ function ProtectedLayout({ children }) {
 
 function RootRedirect() {
   const { isAuthenticated, user } = useAuth();
+  
+  useEffect(() => {
+    if (!isAuthenticated) {
+      window.location.replace('/landing.html');
+    }
+  }, [isAuthenticated]);
+
   if (isAuthenticated) {
     return <Navigate to={defaultLanding[user?.role] || '/dashboard'} replace />;
   }
-  // Redirect unauthenticated users to Vinayak's static hero landing page
-  window.location.href = '/landing.html';
   return null;
 }
 
