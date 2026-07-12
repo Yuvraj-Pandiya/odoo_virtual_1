@@ -57,7 +57,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { login, loginWithToken } = useAuth();
   const navigate = useNavigate();
 
   // Read ?error param set by backend on OAuth2 rejection (e.g., local account conflict)
@@ -120,23 +120,19 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/register', { name, email, password, role });
-      localStorage.setItem('transitops_token', data.token);
-      localStorage.setItem('transitops_user', JSON.stringify(data.user));
-      
-      toast.success('Account created successfully!');
-      
-      // Auto redirect based on role
-      if (data.user.role === 'fleet_manager') {
-        window.location.href = '/vehicles';
-      } else if (data.user.role === 'dispatcher') {
-        window.location.href = '/dashboard';
-      } else if (data.user.role === 'safety_officer') {
-        window.location.href = '/drivers';
-      } else if (data.user.role === 'financial_analyst') {
-        window.location.href = '/fuel';
-      } else {
-        window.location.href = '/dashboard';
-      }
+
+      // Update React auth state properly (no hard reload)
+      loginWithToken(data.token, data.user);
+      toast.success('Account created! Welcome to TransitOps.');
+
+      // Navigate based on role using React router (keeps state)
+      const destinations = {
+        fleet_manager: '/vehicles',
+        dispatcher: '/dashboard',
+        safety_officer: '/drivers',
+        financial_analyst: '/fuel',
+      };
+      navigate(destinations[data.user.role] || '/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed.');
     } finally {
