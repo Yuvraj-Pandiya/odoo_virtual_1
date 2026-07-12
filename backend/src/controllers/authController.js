@@ -113,4 +113,126 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getMe };
+// GET /api/auth/users
+const getUsers = async (req, res) => {
+  try {
+    const result = await query(
+      'SELECT id, name, email, role, is_active, created_at FROM users ORDER BY created_at DESC'
+    );
+    res.json({ success: true, data: result.rows });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+// PUT /api/auth/users/:id/role
+const updateUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+    const validRoles = ['fleet_manager', 'driver', 'safety_officer', 'financial_analyst'];
+
+    if (!role || !validRoles.includes(role)) {
+      return res.status(400).json({ success: false, message: 'Invalid role.' });
+    }
+
+    if (parseInt(id) === req.user.id) {
+      return res.status(400).json({ success: false, message: 'You cannot change your own role.' });
+    }
+
+    const result = await query(
+      'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING id, name, email, role',
+      [role, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    res.json({ success: true, message: 'User role updated successfully.', data: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+// PUT /api/auth/users/:id/status
+const updateUserStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_active } = req.body;
+
+    if (is_active === undefined) {
+      return res.status(400).json({ success: false, message: 'is_active status is required.' });
+    }
+
+    if (parseInt(id) === req.user.id) {
+      return res.status(400).json({ success: false, message: 'You cannot deactivate your own account.' });
+    }
+
+    const result = await query(
+      'UPDATE users SET is_active = $1, updated_at = NOW() WHERE id = $2 RETURNING id, name, email, is_active',
+      [is_active, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    res.json({ success: true, message: 'User status updated successfully.', data: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+// PUT /api/auth/profile
+const updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    if (!name || !email) {
+      return res.status(400).json({ success: false, message: 'Name and email are required.' });
+    }
+
+    // Check email uniqueness
+    const existing = await query('SELECT id FROM users WHERE email = $1 AND id != $2', [email.toLowerCase().trim(), req.user.id]);
+    if (existing.rows.length > 0) {
+      return res.status(409).json({ success: false, message: 'Email is already taken.' });
+    }
+
+    const result = await query(
+      'UPDATE users SET name = $1, email = $2, updated_at = NOW() WHERE id = $3 RETURNING id, name, email, role',
+      [name.trim(), email.toLowerCase().trim(), req.user.id]
+    );
+
+    res.json({ success: true, message: 'Profile updated successfully.', user: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+// PUT /api/auth/change-password
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: 'Current and new passwords are required.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'New password must be at least 6 characters.' });
+    }
+
+    const userRes = await query('SELECT password_hash FROM users WHERE id = $1', [req.user.id]);
+    const isValid = await bcrypt.compare(currentPassword, userRes.rows[0].password_hash);
+    if (!isValid) {
+      return res.status(401).json({ success: false, message: 'Incorrect current password.' });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 12);
+    await query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [newHash, req.user.id]);
+
+    res.json({ success: true, message: 'Password changed successfully.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+module.exports = { login, register, getMe, getUsers, updateUserRole, updateUserStatus, updateProfile, changePassword };

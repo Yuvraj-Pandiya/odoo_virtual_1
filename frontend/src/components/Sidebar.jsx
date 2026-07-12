@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard, Truck, Users, Route, Wrench,
-  Fuel, BarChart3, LogOut, Zap
+  Fuel, BarChart3, LogOut, Zap, Settings
 } from 'lucide-react';
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { to: '/maintenance', icon: Wrench, label: 'Maintenance', section: 'operations' },
   { to: '/fuel', icon: Fuel, label: 'Fuel & Expenses', section: 'finance' },
   { to: '/reports', icon: BarChart3, label: 'Reports & Analytics', section: 'finance' },
+  { to: '/settings', icon: Settings, label: 'Settings', section: 'overview' },
 ];
 
 const sections = {
