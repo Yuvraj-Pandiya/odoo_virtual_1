@@ -336,8 +336,7 @@ export default function LoginPage() {
               <div className="form-group">
                 <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>ROLE (RBAC) <span style={{ color: 'var(--danger)' }}>*</span></label>
                 <select
-                  className="form-select"
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', background: 'var(--bg-main)', border: '1px solid var(--border)', color: 'var(--text-main)' }}
+                  className="logistica-input"
                   value={form.role}
                   onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
                   required

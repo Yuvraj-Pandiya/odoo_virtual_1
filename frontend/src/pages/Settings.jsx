@@ -148,67 +148,100 @@ export default function Settings() {
 
   return (
     <div>
-      <div className="page-header">
+      <div className="page-header" style={{ marginBottom: 24 }}>
         <div className="page-header-left">
-          <h1>Settings</h1>
-          <p>Configure TransitOps security, profile, and system settings</p>
+          <h1 className="page-title"><SettingsIcon size={28} /> Settings</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: 16 }}>Configure TransitOps security, profile, and system settings</p>
+        </div>
+      </div>
+
+      {/* KPI Stats Grid */}
+      <div className="kpi-grid">
+        <div className="logistica-card" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ background: 'rgba(255, 62, 65, 0.1)', padding: 16, borderRadius: 8 }}>
+            <User size={28} color="var(--logistica-primary)" />
+          </div>
+          <div>
+            <h4 style={{ margin: 0, fontSize: 15, color: 'var(--text-muted)' }}>Account Role</h4>
+            <p style={{ margin: 0, fontSize: 24, fontWeight: 700, textTransform: 'capitalize' }}>{user?.role?.replace('_', ' ') || 'User'}</p>
+          </div>
+        </div>
+        <div className="logistica-card" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ background: 'rgba(81, 207, 237, 0.1)', padding: 16, borderRadius: 8 }}>
+            <Shield size={28} color="var(--logistica-secondary)" />
+          </div>
+          <div>
+            <h4 style={{ margin: 0, fontSize: 15, color: 'var(--text-muted)' }}>Security Status</h4>
+            <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Secured</p>
+          </div>
+        </div>
+        <div className="logistica-card" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: 16, borderRadius: 8 }}>
+            <CheckCircle2 size={28} color="#10b981" />
+          </div>
+          <div>
+            <h4 style={{ margin: 0, fontSize: 15, color: 'var(--text-muted)' }}>System Status</h4>
+            <p style={{ margin: 0, fontSize: 24, fontWeight: 700 }}>Online</p>
+          </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'rgba(255,255,255,0.03)', padding: 4, borderRadius: 'var(--radius-md)', width: 'fit-content', border: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 32, background: 'var(--bg-card)', padding: 8, borderRadius: 8, width: 'fit-content', border: '1px solid var(--border-color)', boxShadow: 'var(--card-shadow)' }}>
         {isManager && (
           <button id="tab-rbac"
             style={{
-              display: 'flex', alignItems: 'center', gap: 6, padding: '8px 18px',
-              borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-              background: activeTab === 'rbac' ? 'var(--primary)' : 'transparent',
-              color: activeTab === 'rbac' ? 'white' : 'var(--text-secondary)',
-              transition: 'all 150ms', fontFamily: 'inherit'
+              display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px',
+              borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 600,
+              background: activeTab === 'rbac' ? 'var(--logistica-primary)' : 'transparent',
+              color: activeTab === 'rbac' ? 'white' : 'var(--text-muted)',
+              transition: 'all 0.3s', fontFamily: 'inherit'
             }}
             onClick={() => setActiveTab('rbac')}
           >
-            <Shield size={14} /> RBAC & Users
+            <Shield size={18} /> RBAC & Users
           </button>
         )}
         <button id="tab-profile"
           style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '8px 18px',
-            borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-            background: activeTab === 'profile' ? 'var(--primary)' : 'transparent',
-            color: activeTab === 'profile' ? 'white' : 'var(--text-secondary)',
-            transition: 'all 150ms', fontFamily: 'inherit'
+            display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px',
+            borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 600,
+            background: activeTab === 'profile' ? 'var(--logistica-primary)' : 'transparent',
+            color: activeTab === 'profile' ? 'white' : 'var(--text-muted)',
+            transition: 'all 0.3s', fontFamily: 'inherit'
           }}
           onClick={() => setActiveTab('profile')}
         >
-          <User size={14} /> Profile & Password
+          <User size={18} /> Profile & Password
         </button>
         <button id="tab-system"
           style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '8px 18px',
-            borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-            background: activeTab === 'system' ? 'var(--primary)' : 'transparent',
-            color: activeTab === 'system' ? 'white' : 'var(--text-secondary)',
-            transition: 'all 150ms', fontFamily: 'inherit'
+            display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px',
+            borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 16, fontWeight: 600,
+            background: activeTab === 'system' ? 'var(--logistica-primary)' : 'transparent',
+            color: activeTab === 'system' ? 'white' : 'var(--text-muted)',
+            transition: 'all 0.3s', fontFamily: 'inherit'
           }}
           onClick={() => setActiveTab('system')}
         >
-          <SettingsIcon size={14} /> System Config
+          <SettingsIcon size={18} /> System Config
         </button>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* Tab 1: RBAC & User Directories */}
         {activeTab === 'rbac' && isManager && (
-          <div className="form-grid" style={{ gridTemplateColumns: '1.6fr 1fr', alignItems: 'start' }}>
+          <div className="form-grid" style={{ gridTemplateColumns: '1.6fr 1fr', alignItems: 'start', gap: 32 }}>
             {/* User List */}
-            <div className="card" style={{ padding: 0 }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'between', alignItems: 'center' }}>
-                <span className="card-title">User Directory & Role Assignments</span>
+            <div className="logistica-card">
+              <div className="card-header" style={{ padding: 0, marginBottom: 16 }}>
+                <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Shield size={18} color="var(--logistica-primary)" /> User Directory & Role Assignments
+                </span>
               </div>
               {loadingUsers ? <LoadingSpinner /> : (
-                <div className="data-table-wrapper">
-                  <table className="data-table">
+                <div className="logistica-table-container" style={{ margin: 0, boxShadow: 'none', border: '1px solid var(--border-color)', borderRadius: 8 }}>
+                  <table className="logistica-table">
                     <thead>
                       <tr>
                         <th>User</th>
@@ -222,13 +255,17 @@ export default function Settings() {
                       {users.map(u => (
                         <tr key={u.id}>
                           <td>
-                            <div style={{ fontWeight: 600, fontSize: 14 }}>{u.name} {u.id === user.id && <span style={{ color: 'var(--primary-light)', fontSize: 11 }}>(You)</span>}</div>
+                            <div style={{ fontWeight: 600, fontSize: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <User size={16} color="var(--logistica-primary)" />
+                              {u.name} 
+                              {u.id === user.id && <span style={{ color: 'var(--text-muted)', fontSize: 12, fontWeight: 400 }}>(You)</span>}
+                            </div>
                           </td>
-                          <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{u.email}</td>
+                          <td style={{ fontSize: 13 }}>{u.email}</td>
                           <td>
                             <select
-                              className="filter-select"
-                              style={{ padding: '4px 10px', fontSize: 12 }}
+                              className="logistica-input"
+                              style={{ padding: '6px 10px', fontSize: 13, minWidth: 140 }}
                               value={u.role}
                               disabled={u.id === user.id}
                               onChange={(e) => handleRoleChange(u.id, e.target.value)}
@@ -239,13 +276,23 @@ export default function Settings() {
                             </select>
                           </td>
                           <td>
-                            <span className={`badge ${u.is_active ? 'badge-available' : 'badge-suspended'}`}>
+                            <span className={`logistica-badge ${u.is_active ? 'badge-success' : 'badge-danger'}`}>
                               {u.is_active ? 'Active' : 'Disabled'}
                             </span>
                           </td>
                           <td>
                             <button
-                              className={`btn btn-sm ${u.is_active ? 'btn-danger' : 'btn-success'}`}
+                              style={{
+                                background: u.is_active ? '#ef4444' : '#10b981',
+                                color: 'white',
+                                padding: '6px 12px',
+                                borderRadius: 4,
+                                border: 'none',
+                                cursor: u.id === user.id ? 'not-allowed' : 'pointer',
+                                opacity: u.id === user.id ? 0.5 : 1,
+                                fontSize: 13,
+                                fontWeight: 500
+                              }}
                               disabled={u.id === user.id}
                               onClick={() => handleStatusToggle(u.id, u.is_active)}
                             >
@@ -261,34 +308,34 @@ export default function Settings() {
             </div>
 
             {/* Add User */}
-            <div className="card">
+            <div className="logistica-card">
               <div className="card-header" style={{ padding: 0, marginBottom: 16 }}>
                 <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <UserPlus size={18} color="var(--primary-light)" /> Register Team Member
+                  <UserPlus size={18} color="var(--logistica-primary)" /> Register Team Member
                 </span>
               </div>
               <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div className="form-group">
                   <label className="form-label">Full Name</label>
-                  <input className="form-input" placeholder="Yuvraj Pandiya" value={newUserForm.name} onChange={e => setNewUserForm(f => ({ ...f, name: e.target.value }))} />
+                  <input className="logistica-input" placeholder="Yuvraj Pandiya" value={newUserForm.name} onChange={e => setNewUserForm(f => ({ ...f, name: e.target.value }))} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Email Address</label>
-                  <input type="email" className="form-input" placeholder="yuvraj@transitops.com" value={newUserForm.email} onChange={e => setNewUserForm(f => ({ ...f, email: e.target.value }))} />
+                  <input type="email" className="logistica-input" placeholder="yuvraj@transitops.com" value={newUserForm.email} onChange={e => setNewUserForm(f => ({ ...f, email: e.target.value }))} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Password</label>
-                  <input type="password" className="form-input" placeholder="••••••" value={newUserForm.password} onChange={e => setNewUserForm(f => ({ ...f, password: e.target.value }))} />
+                  <input type="password" className="logistica-input" placeholder="••••••" value={newUserForm.password} onChange={e => setNewUserForm(f => ({ ...f, password: e.target.value }))} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Role Assignment</label>
-                  <select className="form-select" value={newUserForm.role} onChange={e => setNewUserForm(f => ({ ...f, role: e.target.value }))}>
+                  <select className="logistica-input" value={newUserForm.role} onChange={e => setNewUserForm(f => ({ ...f, role: e.target.value }))}>
                     {ROLES.map(r => (
                       <option key={r.value} value={r.value}>{r.label}</option>
                     ))}
                   </select>
                 </div>
-                <button type="submit" className="btn btn-primary w-full" disabled={creatingUser}>
+                <button type="submit" className="btn-logistica w-full" style={{ justifyContent: 'center' }} disabled={creatingUser}>
                   {creatingUser ? 'Registering...' : 'Register User'}
                 </button>
               </form>
@@ -300,7 +347,7 @@ export default function Settings() {
         {activeTab === 'profile' && (
           <div className="form-grid">
             {/* Profile Info */}
-            <div className="card">
+            <div className="logistica-card">
               <div className="card-header" style={{ padding: 0, marginBottom: 16 }}>
                 <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <User size={18} color="var(--primary-light)" /> Personal Information
@@ -309,20 +356,20 @@ export default function Settings() {
               <form onSubmit={handleProfileSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div className="form-group">
                   <label className="form-label">Display Name</label>
-                  <input className="form-input" value={profileForm.name} onChange={e => setProfileForm(f => ({ ...f, name: e.target.value }))} />
+                  <input className="logistica-input" value={profileForm.name} onChange={e => setProfileForm(f => ({ ...f, name: e.target.value }))} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Email Address</label>
-                  <input type="email" className="form-input" value={profileForm.email} onChange={e => setProfileForm(f => ({ ...f, email: e.target.value }))} />
+                  <input type="email" className="logistica-input" value={profileForm.email} onChange={e => setProfileForm(f => ({ ...f, email: e.target.value }))} />
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={savingProfile}>
+                <button type="submit" className="btn-logistica" disabled={savingProfile}>
                   {savingProfile ? 'Saving...' : 'Update Details'}
                 </button>
               </form>
             </div>
 
             {/* Change Password */}
-            <div className="card">
+            <div className="logistica-card">
               <div className="card-header" style={{ padding: 0, marginBottom: 16 }}>
                 <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <Lock size={18} color="var(--primary-light)" /> Change Password
@@ -331,17 +378,17 @@ export default function Settings() {
               <form onSubmit={handlePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div className="form-group">
                   <label className="form-label">Current Password</label>
-                  <input type="password" className="form-input" placeholder="••••••••" value={passwordForm.currentPassword} onChange={e => setPasswordForm(f => ({ ...f, currentPassword: e.target.value }))} />
+                  <input type="password" className="logistica-input" placeholder="••••••••" value={passwordForm.currentPassword} onChange={e => setPasswordForm(f => ({ ...f, currentPassword: e.target.value }))} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">New Password</label>
-                  <input type="password" className="form-input" placeholder="At least 6 characters" value={passwordForm.newPassword} onChange={e => setPasswordForm(f => ({ ...f, newPassword: e.target.value }))} />
+                  <input type="password" className="logistica-input" placeholder="At least 6 characters" value={passwordForm.newPassword} onChange={e => setPasswordForm(f => ({ ...f, newPassword: e.target.value }))} />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Confirm New Password</label>
-                  <input type="password" className="form-input" placeholder="Confirm password" value={passwordForm.confirmPassword} onChange={e => setPasswordForm(f => ({ ...f, confirmPassword: e.target.value }))} />
+                  <input type="password" className="logistica-input" placeholder="Confirm password" value={passwordForm.confirmPassword} onChange={e => setPasswordForm(f => ({ ...f, confirmPassword: e.target.value }))} />
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={savingPassword}>
+                <button type="submit" className="btn-logistica" disabled={savingPassword}>
                   {savingPassword ? 'Changing...' : 'Change Password'}
                 </button>
               </form>
@@ -351,7 +398,7 @@ export default function Settings() {
 
         {/* Tab 3: System Config */}
         {activeTab === 'system' && (
-          <div className="card" style={{ maxWidth: 640 }}>
+          <div className="logistica-card" style={{ maxWidth: 640 }}>
             <div className="card-header" style={{ padding: 0, marginBottom: 20 }}>
               <span className="card-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <SettingsIcon size={18} color="var(--primary-light)" /> Operation Threshold Settings
@@ -362,7 +409,7 @@ export default function Settings() {
                 <label className="form-label">License Expiry Notification Threshold (Days)</label>
                 <input
                   type="number"
-                  className="form-input"
+                  className="logistica-input"
                   value={sysConfig.licenseWarningDays}
                   onChange={e => setSysConfig(c => ({ ...c, licenseWarningDays: e.target.value }))}
                   min="5"
@@ -374,7 +421,7 @@ export default function Settings() {
               <div className="form-group">
                 <label className="form-label">Max Load Safety Buffer Factor</label>
                 <select
-                  className="form-select"
+                  className="logistica-input"
                   value={sysConfig.maxCargoSafetyFactor}
                   onChange={e => setSysConfig(c => ({ ...c, maxCargoSafetyFactor: e.target.value }))}
                 >
@@ -396,7 +443,7 @@ export default function Settings() {
                 <label htmlFor="realtime_alert" style={{ fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>Enable System-wide Real-time KPI Refreshing</label>
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: 'fit-content', marginTop: 10 }}>
+              <button type="submit" className="btn-logistica" style={{ width: 'fit-content', marginTop: 10 }}>
                 Save System Config
               </button>
             </form>
