@@ -19,9 +19,9 @@ function ProtectedLayout({ children }) {
   return (
     <div className="app-layout">
       <Sidebar />
-      <div className="main-content">
+      <div className="logistica-main">
         <Header />
-        <div className="page-container">
+        <div className="logistica-content">
           {children}
         </div>
       </div>

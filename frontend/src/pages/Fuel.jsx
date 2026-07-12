@@ -93,16 +93,16 @@ export default function FuelExpenses() {
 
   return (
     <div>
-      <div className="page-header">
-        <div className="page-header-left">
-          <h1>Fuel & Expenses</h1>
-          <p>Operational cost tracking and fuel consumption logs</p>
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 className="page-title">Fuel & Expenses</h1>
+          <p className="text-muted">Operational cost tracking and fuel consumption logs</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button id="add-fuel-btn" className="btn btn-primary" onClick={() => setFuelModal(true)}>
+          <button id="add-fuel-btn" className="btn-logistica" onClick={() => setFuelModal(true)}>
             <Plus size={16} /> Log Fuel
           </button>
-          <button id="add-expense-btn" className="btn btn-secondary" onClick={() => setExpenseModal(true)}>
+          <button id="add-expense-btn" className="btn-logistica-secondary" onClick={() => setExpenseModal(true)}>
             <Plus size={16} /> Add Expense
           </button>
         </div>
@@ -110,32 +110,44 @@ export default function FuelExpenses() {
 
       {/* Summary */}
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 20 }}>
-        <div className="kpi-card accent">
-          <div className="kpi-icon accent"><Fuel size={20} /></div>
-          <div className="kpi-value">₹{totalFuelCost.toLocaleString('en-IN')}</div>
-          <div className="kpi-label">Total Fuel Cost</div>
+        <div className="logistica-card">
+          <div className="d-flex align-items-center mb-3">
+            <div style={{ width: 44, height: 44, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--logistica-primary)', color: 'white' }}>
+              <Fuel size={22} />
+            </div>
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 4 }}>₹{totalFuelCost.toLocaleString('en-IN')}</div>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>Total Fuel Cost</div>
         </div>
-        <div className="kpi-card warning">
-          <div className="kpi-icon warning"><Receipt size={20} /></div>
-          <div className="kpi-value">₹{totalExpenses.toLocaleString('en-IN')}</div>
-          <div className="kpi-label">Total Other Expenses</div>
+        <div className="logistica-card">
+          <div className="d-flex align-items-center mb-3">
+            <div style={{ width: 44, height: 44, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f59e0b', color: 'white' }}>
+              <Receipt size={22} />
+            </div>
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 4 }}>₹{totalExpenses.toLocaleString('en-IN')}</div>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>Total Other Expenses</div>
         </div>
-        <div className="kpi-card danger">
-          <div className="kpi-icon danger"><Receipt size={20} /></div>
-          <div className="kpi-value">₹{(totalFuelCost + totalExpenses).toLocaleString('en-IN')}</div>
-          <div className="kpi-label">Total Operational Cost</div>
+        <div className="logistica-card">
+          <div className="d-flex align-items-center mb-3">
+            <div style={{ width: 44, height: 44, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#ef4444', color: 'white' }}>
+              <Receipt size={22} />
+            </div>
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 4 }}>₹{(totalFuelCost + totalExpenses).toLocaleString('en-IN')}</div>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>Total Operational Cost</div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 16, background: 'rgba(255,255,255,0.03)', padding: 4, borderRadius: 'var(--radius-md)', width: 'fit-content', border: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16, background: 'var(--bg-main)', padding: 4, borderRadius: 8, width: 'fit-content', border: '1px solid var(--border-color)' }}>
         {[['fuel', 'Fuel Logs', <Fuel size={14} />], ['expenses', 'Expenses', <Receipt size={14} />]].map(([key, label, icon]) => (
           <button key={key} id={`tab-${key}`}
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
-              borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-              background: tab === key ? 'var(--primary)' : 'transparent',
-              color: tab === key ? 'white' : 'var(--text-secondary)',
+              borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+              background: tab === key ? 'var(--logistica-primary)' : 'transparent',
+              color: tab === key ? 'white' : 'var(--text-muted)',
               transition: 'all 150ms'
             }}
             onClick={() => setTab(key)}
@@ -146,12 +158,12 @@ export default function FuelExpenses() {
       </div>
 
       {/* Tables */}
-      <div className="card" style={{ padding: 0 }}>
+      <div className="logistica-card" style={{ padding: 0 }}>
         {loading ? <LoadingSpinner /> : (
           tab === 'fuel' ? (
             fuelLogs.length === 0 ? <EmptyState icon={Fuel} title="No fuel logs" description="Log your first fuel fill-up." /> :
-              <div className="data-table-wrapper">
-                <table className="data-table">
+              <div className="logistica-table-container">
+                <table className="logistica-table">
                   <thead>
                     <tr>
                       <th>Vehicle</th>
@@ -183,8 +195,8 @@ export default function FuelExpenses() {
               </div>
           ) : (
             expenses.length === 0 ? <EmptyState icon={Receipt} title="No expenses recorded" description="Track operational costs by adding expenses." /> :
-              <div className="data-table-wrapper">
-                <table className="data-table">
+              <div className="logistica-table-container">
+                <table className="logistica-table">
                   <thead>
                     <tr>
                       <th>Vehicle</th>
@@ -220,45 +232,45 @@ export default function FuelExpenses() {
       <Modal isOpen={fuelModal} onClose={() => setFuelModal(false)} title="Log Fuel Fill-up"
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setFuelModal(false)}>Cancel</button>
-            <button id="fuel-save-btn" className="btn btn-primary" onClick={handleFuelSubmit} disabled={saving}>{saving ? 'Saving...' : 'Save Fuel Log'}</button>
+            <button className="btn-logistica-secondary" onClick={() => setFuelModal(false)}>Cancel</button>
+            <button id="fuel-save-btn" className="btn-logistica" onClick={handleFuelSubmit} disabled={saving}>{saving ? 'Saving...' : 'Save Fuel Log'}</button>
           </>
         }
       >
         <div className="form-grid">
           <div className="form-group form-full">
-            <label className="form-label">Vehicle <span className="required">*</span></label>
-            <select className="form-select" value={fuelForm.vehicle_id} onChange={e => ff('vehicle_id', e.target.value)}>
+            <label className="form-label">Vehicle <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={fuelForm.vehicle_id} onChange={e => ff('vehicle_id', e.target.value)}>
               <option value="">Select vehicle...</option>
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.registration_number} — {v.name}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Liters <span className="required">*</span></label>
-            <input type="number" className="form-input" placeholder="40" value={fuelForm.liters} onChange={e => ff('liters', e.target.value)} step="0.1" min="0.1" />
+            <label className="form-label">Liters <span className="text-primary">*</span></label>
+            <input type="number" className="logistica-input" placeholder="40" value={fuelForm.liters} onChange={e => ff('liters', e.target.value)} step="0.1" min="0.1" />
           </div>
           <div className="form-group">
-            <label className="form-label">Cost per Liter (₹) <span className="required">*</span></label>
-            <input type="number" className="form-input" placeholder="95.50" value={fuelForm.cost_per_liter} onChange={e => ff('cost_per_liter', e.target.value)} step="0.01" min="0" />
+            <label className="form-label">Cost per Liter (₹) <span className="text-primary">*</span></label>
+            <input type="number" className="logistica-input" placeholder="95.50" value={fuelForm.cost_per_liter} onChange={e => ff('cost_per_liter', e.target.value)} step="0.01" min="0" />
           </div>
           {fuelForm.liters && fuelForm.cost_per_liter && (
             <div className="form-group form-full">
-              <div style={{ background: 'rgba(6,182,212,0.08)', border: '1px solid rgba(6,182,212,0.2)', padding: '8px 14px', borderRadius: 8, fontSize: 13, color: 'var(--accent-light)' }}>
+              <div style={{ background: 'rgba(6,182,212,0.08)', border: '1px solid rgba(6,182,212,0.2)', padding: '8px 14px', borderRadius: 8, fontSize: 13, color: 'var(--logistica-secondary)' }}>
                 Total Cost: <strong>₹{(parseFloat(fuelForm.liters) * parseFloat(fuelForm.cost_per_liter)).toFixed(2)}</strong>
               </div>
             </div>
           )}
           <div className="form-group">
             <label className="form-label">Date</label>
-            <input type="date" className="form-input" value={fuelForm.date} onChange={e => ff('date', e.target.value)} />
+            <input type="date" className="logistica-input" value={fuelForm.date} onChange={e => ff('date', e.target.value)} />
           </div>
           <div className="form-group">
             <label className="form-label">Odometer Reading (km)</label>
-            <input type="number" className="form-input" placeholder="12500" value={fuelForm.odometer_reading} onChange={e => ff('odometer_reading', e.target.value)} />
+            <input type="number" className="logistica-input" placeholder="12500" value={fuelForm.odometer_reading} onChange={e => ff('odometer_reading', e.target.value)} />
           </div>
           <div className="form-group form-full">
             <label className="form-label">Link to Trip (optional)</label>
-            <select className="form-select" value={fuelForm.trip_id} onChange={e => ff('trip_id', e.target.value)}>
+            <select className="logistica-input" value={fuelForm.trip_id} onChange={e => ff('trip_id', e.target.value)}>
               <option value="">No trip</option>
               {trips.map(t => <option key={t.id} value={t.id}>{t.source} → {t.destination} ({t.status})</option>)}
             </select>
@@ -270,40 +282,40 @@ export default function FuelExpenses() {
       <Modal isOpen={expenseModal} onClose={() => setExpenseModal(false)} title="Record Expense"
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setExpenseModal(false)}>Cancel</button>
-            <button id="expense-save-btn" className="btn btn-primary" onClick={handleExpenseSubmit} disabled={saving}>{saving ? 'Saving...' : 'Record Expense'}</button>
+            <button className="btn-logistica-secondary" onClick={() => setExpenseModal(false)}>Cancel</button>
+            <button id="expense-save-btn" className="btn-logistica" onClick={handleExpenseSubmit} disabled={saving}>{saving ? 'Saving...' : 'Record Expense'}</button>
           </>
         }
       >
         <div className="form-grid">
           <div className="form-group form-full">
-            <label className="form-label">Vehicle <span className="required">*</span></label>
-            <select className="form-select" value={expenseForm.vehicle_id} onChange={e => ef('vehicle_id', e.target.value)}>
+            <label className="form-label">Vehicle <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={expenseForm.vehicle_id} onChange={e => ef('vehicle_id', e.target.value)}>
               <option value="">Select vehicle...</option>
               {vehicles.map(v => <option key={v.id} value={v.id}>{v.registration_number} — {v.name}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Category <span className="required">*</span></label>
-            <select className="form-select" value={expenseForm.category} onChange={e => ef('category', e.target.value)}>
+            <label className="form-label">Category <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={expenseForm.category} onChange={e => ef('category', e.target.value)}>
               {EXPENSE_CATS.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Amount (₹) <span className="required">*</span></label>
-            <input type="number" className="form-input" placeholder="250" value={expenseForm.amount} onChange={e => ef('amount', e.target.value)} min="0" />
+            <label className="form-label">Amount (₹) <span className="text-primary">*</span></label>
+            <input type="number" className="logistica-input" placeholder="250" value={expenseForm.amount} onChange={e => ef('amount', e.target.value)} min="0" />
           </div>
           <div className="form-group">
             <label className="form-label">Date</label>
-            <input type="date" className="form-input" value={expenseForm.date} onChange={e => ef('date', e.target.value)} />
+            <input type="date" className="logistica-input" value={expenseForm.date} onChange={e => ef('date', e.target.value)} />
           </div>
           <div className="form-group form-full">
             <label className="form-label">Description</label>
-            <input className="form-input" placeholder="e.g. Mumbai-Pune expressway toll" value={expenseForm.description} onChange={e => ef('description', e.target.value)} />
+            <input className="logistica-input" placeholder="e.g. Mumbai-Pune expressway toll" value={expenseForm.description} onChange={e => ef('description', e.target.value)} />
           </div>
           <div className="form-group form-full">
             <label className="form-label">Link to Trip (optional)</label>
-            <select className="form-select" value={expenseForm.trip_id} onChange={e => ef('trip_id', e.target.value)}>
+            <select className="logistica-input" value={expenseForm.trip_id} onChange={e => ef('trip_id', e.target.value)}>
               <option value="">No trip</option>
               {trips.map(t => <option key={t.id} value={t.id}>{t.source} → {t.destination}</option>)}
             </select>

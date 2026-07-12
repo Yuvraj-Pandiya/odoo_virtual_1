@@ -84,13 +84,13 @@ export default function Maintenance() {
 
   return (
     <div>
-      <div className="page-header">
-        <div className="page-header-left">
-          <h1>Maintenance</h1>
-          <p>Vehicle service records and workshop management</p>
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 className="page-title">Maintenance</h1>
+          <p className="text-muted">Vehicle service records and workshop management</p>
         </div>
         {canEdit && (
-          <button id="add-maintenance-btn" className="btn btn-primary" onClick={() => { setForm(emptyForm); setModal({ open: true }); }}>
+          <button id="add-maintenance-btn" className="btn-logistica" onClick={() => { setForm(emptyForm); setModal({ open: true }); }}>
             <Plus size={16} /> Log Maintenance
           </button>
         )}
@@ -98,37 +98,49 @@ export default function Maintenance() {
 
       {/* Mini KPIs */}
       <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: 20 }}>
-        <div className="kpi-card warning">
-          <div className="kpi-icon warning"><Wrench size={20} /></div>
-          <div className="kpi-value">{activeLogs}</div>
-          <div className="kpi-label">Active Maintenance</div>
+        <div className="logistica-card">
+          <div className="d-flex align-items-center mb-3">
+            <div style={{ width: 44, height: 44, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--logistica-secondary)', color: 'white' }}>
+              <Wrench size={22} />
+            </div>
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 4 }}>{activeLogs}</div>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>Active Maintenance</div>
         </div>
-        <div className="kpi-card success">
-          <div className="kpi-icon success"><CheckCircle size={20} /></div>
-          <div className="kpi-value">{logs.filter(l => l.status === 'Closed').length}</div>
-          <div className="kpi-label">Completed Services</div>
+        <div className="logistica-card">
+          <div className="d-flex align-items-center mb-3">
+            <div style={{ width: 44, height: 44, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#10b981', color: 'white' }}>
+              <CheckCircle size={22} />
+            </div>
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 4 }}>{logs.filter(l => l.status === 'Closed').length}</div>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>Completed Services</div>
         </div>
-        <div className="kpi-card danger">
-          <div className="kpi-icon danger"><Wrench size={20} /></div>
-          <div className="kpi-value">₹{totalCost.toLocaleString('en-IN')}</div>
-          <div className="kpi-label">Total Maintenance Cost</div>
+        <div className="logistica-card">
+          <div className="d-flex align-items-center mb-3">
+            <div style={{ width: 44, height: 44, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#ef4444', color: 'white' }}>
+              <Wrench size={22} />
+            </div>
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 800, color: 'var(--text-main)', marginBottom: 4 }}>₹{totalCost.toLocaleString('en-IN')}</div>
+          <div style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>Total Maintenance Cost</div>
         </div>
       </div>
 
-      <div className="filter-bar">
-        <select id="maint-status-filter" className="filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+      <div className="logistica-card mb-4" style={{ padding: '16px 24px' }}>
+        <select id="maint-status-filter" className="logistica-input" style={{ width: '200px' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
           <option value="">All Records</option>
           <option value="Active">Active</option>
           <option value="Closed">Closed</option>
         </select>
       </div>
 
-      <div className="card" style={{ padding: 0 }}>
+      <div className="logistica-card" style={{ padding: 0 }}>
         {loading ? <LoadingSpinner /> : logs.length === 0 ? (
           <EmptyState icon={Wrench} title="No maintenance records" description="Log a maintenance record to track vehicle servicing." />
         ) : (
-          <div className="data-table-wrapper">
-            <table className="data-table">
+          <div className="logistica-table-container">
+            <table className="logistica-table">
               <thead>
                 <tr>
                   <th>Vehicle</th>
@@ -161,8 +173,8 @@ export default function Maintenance() {
                     {canEdit && (
                       <td>
                         {l.status === 'Active' && (
-                          <button id={`close-maint-${l.id}`} className="btn btn-sm btn-success" onClick={() => setCloseModal({ open: true, log: l })}>
-                            <CheckCircle size={13} /> Close
+                          <button id={`close-maint-${l.id}`} className="btn-icon text-success" onClick={() => setCloseModal({ open: true, log: l })}>
+                            <CheckCircle size={16} /> Close
                           </button>
                         )}
                       </td>
@@ -179,21 +191,21 @@ export default function Maintenance() {
       <Modal isOpen={modal.open} onClose={() => setModal({ open: false })} title="Log Maintenance Record"
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setModal({ open: false })}>Cancel</button>
-            <button id="maint-save-btn" className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
+            <button className="btn-logistica-secondary" onClick={() => setModal({ open: false })}>Cancel</button>
+            <button id="maint-save-btn" className="btn-logistica" onClick={handleSubmit} disabled={saving}>
               {saving ? 'Saving...' : 'Create Record'}
             </button>
           </>
         }
       >
-        <div className="alert alert-warning">
-          <Wrench size={15} />
-          Creating this record will automatically set the vehicle status to <strong>In Shop</strong>.
+        <div className="logistica-alert logistica-alert-warning">
+          <Wrench size={20} />
+          <span>Creating this record will automatically set the vehicle status to <strong>In Shop</strong>.</span>
         </div>
         <div className="form-grid">
           <div className="form-group form-full">
-            <label className="form-label">Vehicle <span className="required">*</span></label>
-            <select className="form-select" value={form.vehicle_id} onChange={e => f('vehicle_id', e.target.value)}>
+            <label className="form-label">Vehicle <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={form.vehicle_id} onChange={e => f('vehicle_id', e.target.value)}>
               <option value="">Select vehicle...</option>
               {vehicles.map(v => (
                 <option key={v.id} value={v.id}>{v.registration_number} — {v.name} ({v.status})</option>
@@ -201,22 +213,22 @@ export default function Maintenance() {
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Service Type <span className="required">*</span></label>
-            <select className="form-select" value={form.type} onChange={e => f('type', e.target.value)}>
+            <label className="form-label">Service Type <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={form.type} onChange={e => f('type', e.target.value)}>
               {MAINTENANCE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div className="form-group">
             <label className="form-label">Estimated Cost (₹)</label>
-            <input type="number" className="form-input" placeholder="5000" value={form.cost} onChange={e => f('cost', e.target.value)} min="0" />
+            <input type="number" className="logistica-input" placeholder="5000" value={form.cost} onChange={e => f('cost', e.target.value)} min="0" />
           </div>
           <div className="form-group">
-            <label className="form-label">Start Date <span className="required">*</span></label>
-            <input type="date" className="form-input" value={form.start_date} onChange={e => f('start_date', e.target.value)} />
+            <label className="form-label">Start Date <span className="text-primary">*</span></label>
+            <input type="date" className="logistica-input" value={form.start_date} onChange={e => f('start_date', e.target.value)} />
           </div>
           <div className="form-group form-full">
             <label className="form-label">Description</label>
-            <textarea className="form-textarea" placeholder="Describe the maintenance work..." value={form.description} onChange={e => f('description', e.target.value)} />
+            <textarea className="logistica-input" placeholder="Describe the maintenance work..." value={form.description} onChange={e => f('description', e.target.value)} />
           </div>
         </div>
       </Modal>
@@ -225,8 +237,8 @@ export default function Maintenance() {
       <Modal isOpen={closeModal.open} onClose={() => setCloseModal({ open: false, log: null })} title="Close Maintenance Record"
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setCloseModal({ open: false, log: null })}>Cancel</button>
-            <button id="close-maint-confirm-btn" className="btn btn-success" onClick={handleClose} disabled={saving}>
+            <button className="btn-logistica-secondary" onClick={() => setCloseModal({ open: false, log: null })}>Cancel</button>
+            <button id="close-maint-confirm-btn" className="btn-logistica" style={{ backgroundColor: '#10b981' }} onClick={handleClose} disabled={saving}>
               {saving ? 'Closing...' : 'Close & Restore Vehicle'}
             </button>
           </>
@@ -234,14 +246,16 @@ export default function Maintenance() {
       >
         {closeModal.log && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div className="alert alert-success">
-              <CheckCircle size={15} />
-              Closing <strong>{closeModal.log.type}</strong> for <strong>{closeModal.log.registration_number}</strong>.
-              Vehicle will be restored to <strong>Available</strong>.
+            <div className="logistica-alert logistica-alert-warning" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderLeftColor: '#10b981' }}>
+              <CheckCircle size={20} />
+              <div>
+                Closing <strong>{closeModal.log.type}</strong> for <strong>{closeModal.log.registration_number}</strong>.<br/>
+                Vehicle will be restored to <strong>Available</strong>.
+              </div>
             </div>
             <div className="form-group">
               <label className="form-label">Completion Date</label>
-              <input type="date" className="form-input" value={closeDate} onChange={e => setCloseDate(e.target.value)} />
+              <input type="date" className="logistica-input" value={closeDate} onChange={e => setCloseDate(e.target.value)} />
             </div>
           </div>
         )}

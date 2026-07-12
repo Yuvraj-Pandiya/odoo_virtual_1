@@ -48,28 +48,25 @@ export default function Sidebar() {
   const initials = user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">
-          <Zap size={20} color="white" strokeWidth={2.5} />
-        </div>
-        <div className="sidebar-logo-text">
-          <span className="sidebar-logo-title">TransitOps</span>
-          <span className="sidebar-logo-sub">Fleet Platform</span>
-        </div>
+    <aside className="logistica-sidebar">
+      <div className="logistica-sidebar-logo">
+        <Zap size={28} color="var(--logistica-primary)" strokeWidth={2.5} />
+        <h2>Logistica</h2>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className="logistica-nav">
         {Object.entries(grouped).map(([section, items]) => (
-          <div key={section}>
-            <div className="nav-section-label">{sections[section]}</div>
+          <div key={section} className="mb-3">
+            <div className="text-muted" style={{ padding: '0 24px', fontSize: '12px', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '1px', marginBottom: '8px' }}>
+              {sections[section]}
+            </div>
             {items.map(({ to, icon: Icon, label }) => (
               <NavLink
                 key={to}
                 to={to}
-                className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}
+                className={({ isActive }) => `logistica-nav-item${isActive ? ' active' : ''}`}
               >
-                <Icon size={18} className="nav-icon" />
+                <Icon size={18} />
                 {label}
               </NavLink>
             ))}
@@ -77,20 +74,23 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="sidebar-footer">
-        <div className="user-card">
-          <div className="user-avatar">{initials}</div>
-          <div className="user-info">
-            <div className="user-name">{user?.name}</div>
-            <div className="user-role">{roleLabels[user?.role]}</div>
+      <div className="logistica-sidebar-footer">
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center gap-2">
+            <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: 'var(--logistica-secondary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+              {initials}
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{user?.name}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{roleLabels[user?.role]}</div>
+            </div>
           </div>
           <button
             onClick={handleLogout}
-            className="btn btn-icon btn-secondary"
+            className="btn-icon"
             title="Logout"
-            style={{ padding: '6px', marginLeft: 'auto' }}
           >
-            <LogOut size={15} />
+            <LogOut size={16} />
           </button>
         </div>
       </div>

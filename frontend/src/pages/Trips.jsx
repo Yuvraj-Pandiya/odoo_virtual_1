@@ -127,36 +127,38 @@ export default function Trips() {
 
   return (
     <div>
-      <div className="page-header">
-        <div className="page-header-left">
-          <h1>Trip Management</h1>
-          <p>Create, dispatch, complete and track all deliveries</p>
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 className="page-title">Trip Management</h1>
+          <p className="text-muted">Create, dispatch, complete and track all deliveries</p>
         </div>
         {canCreate && (
-          <button id="add-trip-btn" className="btn btn-primary" onClick={openCreate}>
+          <button id="add-trip-btn" className="btn-logistica" onClick={openCreate}>
             <Plus size={16} /> Create Trip
           </button>
         )}
       </div>
 
-      <div className="filter-bar">
-        <div className="search-bar">
-          <Search size={16} className="search-icon" />
-          <input id="trip-search" placeholder="Search source, destination, vehicle..." value={filters.search}
-            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))} />
+      <div className="logistica-card mb-4" style={{ padding: '16px 24px' }}>
+        <div className="d-flex gap-3 align-items-center flex-wrap">
+          <div style={{ flex: 1, minWidth: '250px', position: 'relative' }}>
+            <Search size={16} style={{ position: 'absolute', left: 12, top: 14, color: 'var(--text-muted)' }} />
+            <input id="trip-search" className="logistica-input" style={{ paddingLeft: 36 }} placeholder="Search source, destination, vehicle..." value={filters.search}
+              onChange={e => setFilters(f => ({ ...f, search: e.target.value }))} />
+          </div>
+          <select id="trip-status-filter" className="logistica-input" style={{ width: 'auto' }} value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}>
+            <option value="">All Statuses</option>
+            {['Draft', 'Dispatched', 'Completed', 'Cancelled'].map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
         </div>
-        <select id="trip-status-filter" className="filter-select" value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}>
-          <option value="">All Statuses</option>
-          {['Draft', 'Dispatched', 'Completed', 'Cancelled'].map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
       </div>
 
-      <div className="card" style={{ padding: 0 }}>
+      <div className="logistica-card" style={{ padding: 0 }}>
         {loading ? <LoadingSpinner /> : trips.length === 0 ? (
           <EmptyState icon={Route} title="No trips found" description="Create your first trip to start dispatching." />
         ) : (
-          <div className="data-table-wrapper">
-            <table className="data-table">
+          <div className="logistica-table-container">
+            <table className="logistica-table">
               <thead>
                 <tr>
                   <th>Route</th>
@@ -193,24 +195,24 @@ export default function Trips() {
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: 5 }}>
-                        <button id={`view-trip-${t.id}`} className="btn btn-sm btn-secondary" onClick={() => setViewModal({ open: true, trip: t })} title="View"><Eye size={13} /></button>
+                        <button id={`view-trip-${t.id}`} className="btn-icon" onClick={() => setViewModal({ open: true, trip: t })} title="View"><Eye size={16} /></button>
                         {t.status === 'Draft' && canCreate && (
-                          <button id={`dispatch-trip-${t.id}`} className="btn btn-sm btn-primary" onClick={() => dispatch(t.id)} title="Dispatch">
-                            <Zap size={13} />
+                          <button id={`dispatch-trip-${t.id}`} className="btn-icon text-secondary" onClick={() => dispatch(t.id)} title="Dispatch">
+                            <Zap size={16} />
                           </button>
                         )}
                         {t.status === 'Dispatched' && canCreate && (
                           <>
-                            <button id={`complete-trip-${t.id}`} className="btn btn-sm btn-success" onClick={() => openComplete(t)} title="Complete">
-                              <CheckCircle size={13} />
+                            <button id={`complete-trip-${t.id}`} className="btn-icon text-success" onClick={() => openComplete(t)} title="Complete">
+                              <CheckCircle size={16} />
                             </button>
-                            <button id={`cancel-trip-${t.id}`} className="btn btn-sm btn-danger" onClick={() => cancel(t.id)} title="Cancel">
-                              <XCircle size={13} />
+                            <button id={`cancel-trip-${t.id}`} className="btn-icon text-danger" onClick={() => cancel(t.id)} title="Cancel">
+                              <XCircle size={16} />
                             </button>
                           </>
                         )}
                         {t.status === 'Draft' && canCreate && (
-                          <button id={`cancel-draft-trip-${t.id}`} className="btn btn-sm btn-danger" onClick={() => cancel(t.id)} title="Cancel"><XCircle size={13} /></button>
+                          <button id={`cancel-draft-trip-${t.id}`} className="btn-icon text-danger" onClick={() => cancel(t.id)} title="Cancel"><XCircle size={16} /></button>
                         )}
                       </div>
                     </td>
@@ -226,8 +228,8 @@ export default function Trips() {
       <Modal isOpen={modal.open} onClose={() => setModal(m => ({ ...m, open: false }))} title="Create New Trip" size="lg"
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setModal(m => ({ ...m, open: false }))}>Cancel</button>
-            <button id="trip-save-btn" className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
+            <button className="btn-logistica-secondary" onClick={() => setModal(m => ({ ...m, open: false }))}>Cancel</button>
+            <button id="trip-save-btn" className="btn-logistica" onClick={handleSubmit} disabled={saving}>
               {saving ? 'Creating...' : 'Create Trip'}
             </button>
           </>
@@ -235,16 +237,16 @@ export default function Trips() {
       >
         <div className="form-grid">
           <div className="form-group">
-            <label className="form-label">Source <span className="required">*</span></label>
-            <input className="form-input" placeholder="e.g. Mumbai" value={form.source} onChange={e => f('source', e.target.value)} />
+            <label className="form-label">Source <span className="text-primary">*</span></label>
+            <input className="logistica-input" placeholder="e.g. Mumbai" value={form.source} onChange={e => f('source', e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="form-label">Destination <span className="required">*</span></label>
-            <input className="form-input" placeholder="e.g. Pune" value={form.destination} onChange={e => f('destination', e.target.value)} />
+            <label className="form-label">Destination <span className="text-primary">*</span></label>
+            <input className="logistica-input" placeholder="e.g. Pune" value={form.destination} onChange={e => f('destination', e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="form-label">Vehicle <span className="required">*</span></label>
-            <select className="form-select" value={form.vehicle_id} onChange={e => f('vehicle_id', e.target.value)}>
+            <label className="form-label">Vehicle <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={form.vehicle_id} onChange={e => f('vehicle_id', e.target.value)}>
               <option value="">Select available vehicle...</option>
               {vehicles.map(v => (
                 <option key={v.id} value={v.id}>{v.registration_number} — {v.name} (Max: {v.max_load_kg} kg)</option>
@@ -252,8 +254,8 @@ export default function Trips() {
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Driver <span className="required">*</span></label>
-            <select className="form-select" value={form.driver_id} onChange={e => f('driver_id', e.target.value)}>
+            <label className="form-label">Driver <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={form.driver_id} onChange={e => f('driver_id', e.target.value)}>
               <option value="">Select available driver...</option>
               {drivers.map(d => (
                 <option key={d.id} value={d.id}>{d.name} ({d.license_number})</option>
@@ -261,11 +263,11 @@ export default function Trips() {
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">Cargo Weight (kg) <span className="required">*</span></label>
-            <input type="number" className="form-input" placeholder="450" value={form.cargo_weight_kg}
+            <label className="form-label">Cargo Weight (kg) <span className="text-primary">*</span></label>
+            <input type="number" className="logistica-input" placeholder="450" value={form.cargo_weight_kg}
               onChange={e => f('cargo_weight_kg', e.target.value)} min="0" />
             {selectedVehicle && (
-              <span style={{ fontSize: 12, color: parseFloat(form.cargo_weight_kg) > parseFloat(selectedVehicle.max_load_kg) ? 'var(--danger-light)' : 'var(--success-light)' }}>
+              <span style={{ fontSize: 12, color: parseFloat(form.cargo_weight_kg) > parseFloat(selectedVehicle.max_load_kg) ? '#ef4444' : '#10b981' }}>
                 {parseFloat(form.cargo_weight_kg) > parseFloat(selectedVehicle.max_load_kg)
                   ? `⚠️ Exceeds max load of ${selectedVehicle.max_load_kg} kg`
                   : `✓ Within limit of ${selectedVehicle.max_load_kg} kg`}
@@ -273,18 +275,18 @@ export default function Trips() {
             )}
           </div>
           <div className="form-group">
-            <label className="form-label">Planned Distance (km) <span className="required">*</span></label>
-            <input type="number" className="form-input" placeholder="150" value={form.planned_distance_km}
+            <label className="form-label">Planned Distance (km) <span className="text-primary">*</span></label>
+            <input type="number" className="logistica-input" placeholder="150" value={form.planned_distance_km}
               onChange={e => f('planned_distance_km', e.target.value)} min="1" />
           </div>
           <div className="form-group">
             <label className="form-label">Expected Revenue (₹)</label>
-            <input type="number" className="form-input" placeholder="12000" value={form.revenue}
+            <input type="number" className="logistica-input" placeholder="12000" value={form.revenue}
               onChange={e => f('revenue', e.target.value)} min="0" />
           </div>
           <div className="form-group form-full">
             <label className="form-label">Notes</label>
-            <textarea className="form-textarea" placeholder="Any special instructions..." value={form.notes}
+            <textarea className="logistica-input" placeholder="Any special instructions..." value={form.notes}
               onChange={e => f('notes', e.target.value)} />
           </div>
         </div>
@@ -295,8 +297,8 @@ export default function Trips() {
         title="Complete Trip"
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setCompleteModal({ open: false, trip: null })}>Cancel</button>
-            <button id="complete-trip-confirm-btn" className="btn btn-success" onClick={handleComplete} disabled={saving}>
+            <button className="btn-logistica-secondary" onClick={() => setCompleteModal({ open: false, trip: null })}>Cancel</button>
+            <button id="complete-trip-confirm-btn" className="btn-logistica" style={{ backgroundColor: '#10b981' }} onClick={handleComplete} disabled={saving}>
               {saving ? 'Completing...' : 'Mark as Completed'}
             </button>
           </>
@@ -304,19 +306,21 @@ export default function Trips() {
       >
         {completeModal.trip && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div className="alert alert-success">
-              <CheckCircle size={15} />
-              Completing trip: <strong>{completeModal.trip.source} → {completeModal.trip.destination}</strong>.
-              Vehicle and Driver will be set back to Available.
+            <div className="logistica-alert logistica-alert-warning" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderLeftColor: '#10b981' }}>
+              <CheckCircle size={20} />
+              <div>
+                Completing trip: <strong>{completeModal.trip.source} → {completeModal.trip.destination}</strong>.<br/>
+                Vehicle and Driver will be set back to Available.
+              </div>
             </div>
             <div className="form-group">
-              <label className="form-label">Actual Distance (km) <span className="required">*</span></label>
-              <input type="number" className="form-input" value={completeForm.actual_distance_km}
+              <label className="form-label">Actual Distance (km) <span className="text-primary">*</span></label>
+              <input type="number" className="logistica-input" value={completeForm.actual_distance_km}
                 onChange={e => setCompleteForm(f => ({ ...f, actual_distance_km: e.target.value }))} min="1" />
             </div>
             <div className="form-group">
               <label className="form-label">Fuel Consumed (Liters)</label>
-              <input type="number" className="form-input" placeholder="18.5" value={completeForm.fuel_consumed_l}
+              <input type="number" className="logistica-input" placeholder="18.5" value={completeForm.fuel_consumed_l}
                 onChange={e => setCompleteForm(f => ({ ...f, fuel_consumed_l: e.target.value }))} min="0" step="0.1" />
             </div>
           </div>
@@ -325,7 +329,7 @@ export default function Trips() {
 
       {/* View Trip Modal */}
       <Modal isOpen={viewModal.open} onClose={() => setViewModal({ open: false, trip: null })} title="Trip Details"
-        footer={<button className="btn btn-secondary" onClick={() => setViewModal({ open: false, trip: null })}>Close</button>}
+        footer={<button className="btn-logistica-secondary" onClick={() => setViewModal({ open: false, trip: null })}>Close</button>}
       >
         {viewModal.trip && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -341,17 +345,17 @@ export default function Trips() {
               ['Status', viewModal.trip.status],
               ['Created', format(new Date(viewModal.trip.created_at), 'dd MMM yyyy HH:mm')],
             ].map(([label, value]) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
-                <span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{label}</span>
-                <span style={{ fontWeight: 600, fontSize: 13 }}>
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: 8 }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{label}</span>
+                <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-main)' }}>
                   {label === 'Status' ? <StatusBadge status={value} /> : value}
                 </span>
               </div>
             ))}
             {viewModal.trip.notes && (
               <div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 4 }}>Notes</div>
-                <div style={{ fontSize: 13, color: 'var(--text-primary)', background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border)' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 4 }}>Notes</div>
+                <div style={{ fontSize: 13, color: 'var(--text-main)', background: 'var(--bg-main)', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)' }}>
                   {viewModal.trip.notes}
                 </div>
               </div>

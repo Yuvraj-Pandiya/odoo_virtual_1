@@ -102,21 +102,21 @@ export default function Drivers() {
 
   return (
     <div>
-      <div className="page-header">
-        <div className="page-header-left">
-          <h1>Driver Management</h1>
-          <p>Driver profiles, licenses, and compliance tracking</p>
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 className="page-title">Driver Management</h1>
+          <p className="text-muted">Driver profiles, licenses, and compliance tracking</p>
         </div>
         {canEdit && (
-          <button id="add-driver-btn" className="btn btn-primary" onClick={openCreate}>
+          <button id="add-driver-btn" className="btn-logistica" onClick={openCreate}>
             <Plus size={16} /> Add Driver
           </button>
         )}
       </div>
 
       {(expiringCount > 0 || expiredCount > 0) && (
-        <div className="alert alert-warning" style={{ marginBottom: 16 }}>
-          <AlertTriangle size={16} style={{ flexShrink: 0 }} />
+        <div className="logistica-alert logistica-alert-warning">
+          <AlertTriangle size={20} style={{ flexShrink: 0 }} />
           <span>
             {expiredCount > 0 && <><strong>{expiredCount} driver(s)</strong> have expired licenses. </>}
             {expiringCount > 0 && <><strong>{expiringCount} driver(s)</strong> have licenses expiring within 30 days.</>}
@@ -125,24 +125,26 @@ export default function Drivers() {
         </div>
       )}
 
-      <div className="filter-bar">
-        <div className="search-bar">
-          <Search size={16} className="search-icon" />
-          <input id="driver-search" placeholder="Search by name or license..." value={filters.search}
-            onChange={e => setFilters(f => ({ ...f, search: e.target.value }))} />
+      <div className="logistica-card mb-4" style={{ padding: '16px 24px' }}>
+        <div className="d-flex gap-3 align-items-center flex-wrap">
+          <div style={{ flex: 1, minWidth: '250px', position: 'relative' }}>
+            <Search size={16} style={{ position: 'absolute', left: 12, top: 14, color: 'var(--text-muted)' }} />
+            <input id="driver-search" className="logistica-input" style={{ paddingLeft: 36 }} placeholder="Search by name or license..." value={filters.search}
+              onChange={e => setFilters(f => ({ ...f, search: e.target.value }))} />
+          </div>
+          <select id="driver-status-filter" className="logistica-input" style={{ width: 'auto' }} value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}>
+            <option value="">All Statuses</option>
+            {['Available', 'On Trip', 'Off Duty', 'Suspended'].map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
         </div>
-        <select id="driver-status-filter" className="filter-select" value={filters.status} onChange={e => setFilters(f => ({ ...f, status: e.target.value }))}>
-          <option value="">All Statuses</option>
-          {['Available', 'On Trip', 'Off Duty', 'Suspended'].map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
       </div>
 
-      <div className="card" style={{ padding: 0 }}>
+      <div className="logistica-card" style={{ padding: 0 }}>
         {loading ? <LoadingSpinner /> : drivers.length === 0 ? (
           <EmptyState icon={Users} title="No drivers found" description="Register drivers to assign them to trips." />
         ) : (
-          <div className="data-table-wrapper">
-            <table className="data-table">
+          <div className="logistica-table-container">
+            <table className="logistica-table">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -187,8 +189,8 @@ export default function Drivers() {
                       {canEdit && (
                         <td>
                           <div style={{ display: 'flex', gap: 6 }}>
-                            <button id={`edit-driver-${d.id}`} className="btn btn-sm btn-secondary" onClick={() => openEdit(d)}><Edit2 size={13} /></button>
-                            <button id={`del-driver-${d.id}`} className="btn btn-sm btn-danger" onClick={() => handleDelete(d.id)}><Trash2 size={13} /></button>
+                            <button id={`edit-driver-${d.id}`} className="btn-icon" onClick={() => openEdit(d)}><Edit2 size={16} /></button>
+                            <button id={`del-driver-${d.id}`} className="btn-icon text-primary" onClick={() => handleDelete(d.id)}><Trash2 size={16} /></button>
                           </div>
                         </td>
                       )}
@@ -205,8 +207,8 @@ export default function Drivers() {
         title={modal.mode === 'create' ? 'Register New Driver' : 'Edit Driver'}
         footer={
           <>
-            <button className="btn btn-secondary" onClick={() => setModal(m => ({ ...m, open: false }))}>Cancel</button>
-            <button id="driver-save-btn" className="btn btn-primary" onClick={handleSubmit} disabled={saving}>
+            <button className="btn-logistica-secondary" onClick={() => setModal(m => ({ ...m, open: false }))}>Cancel</button>
+            <button id="driver-save-btn" className="btn-logistica" onClick={handleSubmit} disabled={saving}>
               {saving ? 'Saving...' : modal.mode === 'create' ? 'Register Driver' : 'Save Changes'}
             </button>
           </>
@@ -214,35 +216,35 @@ export default function Drivers() {
       >
         <div className="form-grid">
           <div className="form-group">
-            <label className="form-label">Full Name <span className="required">*</span></label>
-            <input className="form-input" placeholder="Alex Johnson" value={form.name} onChange={e => f('name', e.target.value)} />
+            <label className="form-label">Full Name <span className="text-primary">*</span></label>
+            <input className="logistica-input" placeholder="Alex Johnson" value={form.name} onChange={e => f('name', e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="form-label">License Number <span className="required">*</span></label>
-            <input className="form-input" placeholder="DL-2024-001" value={form.license_number}
+            <label className="form-label">License Number <span className="text-primary">*</span></label>
+            <input className="logistica-input" placeholder="DL-2024-001" value={form.license_number}
               onChange={e => f('license_number', e.target.value.toUpperCase())} disabled={modal.mode === 'edit'} />
           </div>
           <div className="form-group">
-            <label className="form-label">License Category <span className="required">*</span></label>
-            <select className="form-select" value={form.license_category} onChange={e => f('license_category', e.target.value)}>
+            <label className="form-label">License Category <span className="text-primary">*</span></label>
+            <select className="logistica-input" value={form.license_category} onChange={e => f('license_category', e.target.value)}>
               {LICENSE_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div className="form-group">
-            <label className="form-label">License Expiry Date <span className="required">*</span></label>
-            <input type="date" className="form-input" value={form.license_expiry} onChange={e => f('license_expiry', e.target.value)} />
+            <label className="form-label">License Expiry Date <span className="text-primary">*</span></label>
+            <input type="date" className="logistica-input" value={form.license_expiry} onChange={e => f('license_expiry', e.target.value)} />
           </div>
           <div className="form-group">
             <label className="form-label">Contact Number</label>
-            <input className="form-input" placeholder="+91-9876543210" value={form.contact} onChange={e => f('contact', e.target.value)} />
+            <input className="logistica-input" placeholder="+91-9876543210" value={form.contact} onChange={e => f('contact', e.target.value)} />
           </div>
           <div className="form-group">
             <label className="form-label">Safety Score (0–100)</label>
-            <input type="number" className="form-input" min="0" max="100" value={form.safety_score} onChange={e => f('safety_score', e.target.value)} />
+            <input type="number" className="logistica-input" min="0" max="100" value={form.safety_score} onChange={e => f('safety_score', e.target.value)} />
           </div>
           <div className="form-group">
             <label className="form-label">Status</label>
-            <select className="form-select" value={form.status} onChange={e => f('status', e.target.value)}>
+            <select className="logistica-input" value={form.status} onChange={e => f('status', e.target.value)}>
               {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>

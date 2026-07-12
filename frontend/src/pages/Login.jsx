@@ -86,18 +86,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-bg" />
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundImage: 'url(/img/carousel-1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 0 }} />
 
-      <div className="login-card" style={{ maxWidth: mode === 'register' ? '460px' : '420px' }}>
-        <div className="login-logo">
-          <div className="login-logo-icon">
-            <Zap size={28} color="white" strokeWidth={2.5} />
+      <div className="logistica-card" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: mode === 'register' ? '460px' : '420px', padding: '40px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, borderRadius: '50%', backgroundColor: 'var(--logistica-primary)', color: 'white', marginBottom: 16 }}>
+             <Zap size={32} />
           </div>
-          <div>
-            <div className="login-title">TransitOps</div>
-            <div className="login-subtitle">Smart Transport Operations Platform</div>
-          </div>
+          <h2 style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-main)', marginBottom: 8 }}>Logistica</h2>
+          <p style={{ color: 'var(--text-muted)' }}>Smart Transport Operations Platform</p>
         </div>
 
         {mode === 'login' ? (
@@ -108,7 +106,7 @@ export default function LoginPage() {
                 <input
                   id="login-email"
                   type="email"
-                  className="form-input"
+                  className="logistica-input"
                   placeholder="you@transitops.com"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
@@ -122,7 +120,7 @@ export default function LoginPage() {
                   <input
                     id="login-password"
                     type={showPassword ? 'text' : 'password'}
-                    className="form-input"
+                    className="logistica-input"
                     placeholder="••••••••"
                     value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
@@ -145,13 +143,13 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="alert alert-danger">
+                <div className="logistica-alert logistica-alert-danger">
                   <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
                   {error}
                 </div>
               )}
 
-              <button id="login-submit-btn" type="submit" className="btn btn-primary btn-lg w-full" disabled={loading}>
+              <button id="login-submit-btn" type="submit" className="btn-logistica" style={{ width: '100%', padding: '14px', fontSize: 16 }} disabled={loading}>
                 {loading ? 'Signing in...' : 'Sign In'}
               </button>
             </form>
@@ -204,7 +202,7 @@ export default function LoginPage() {
                 <input
                   id="register-name"
                   type="text"
-                  className="form-input"
+                  className="logistica-input"
                   placeholder="Yuvraj Pandiya"
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
@@ -216,7 +214,7 @@ export default function LoginPage() {
                 <input
                   id="register-email"
                   type="email"
-                  className="form-input"
+                  className="logistica-input"
                   placeholder="you@transitops.com"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
@@ -229,7 +227,7 @@ export default function LoginPage() {
                   <input
                     id="register-password"
                     type={showPassword ? 'text' : 'password'}
-                    className="form-input"
+                    className="logistica-input"
                     placeholder="••••••••"
                     value={form.password}
                     onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
@@ -265,13 +263,13 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="alert alert-danger">
+                <div className="logistica-alert logistica-alert-danger">
                   <AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} />
                   {error}
                 </div>
               )}
 
-              <button id="register-submit-btn" type="submit" className="btn btn-primary btn-lg w-full" disabled={loading}>
+              <button id="register-submit-btn" type="submit" className="btn-logistica" style={{ width: '100%', padding: '14px', fontSize: 16 }} disabled={loading}>
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </form>

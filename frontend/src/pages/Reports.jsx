@@ -123,31 +123,31 @@ export default function Reports() {
 
   return (
     <div>
-      <div className="page-header">
-        <div className="page-header-left">
-          <h1>Reports & Analytics</h1>
-          <p>Fleet performance, cost analysis, and ROI insights</p>
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 className="page-title">Reports & Analytics</h1>
+          <p className="text-muted">Fleet performance, cost analysis, and ROI insights</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button id="export-csv-btn" className="btn btn-secondary"
+          <button id="export-csv-btn" className="btn-logistica-secondary"
             onClick={() => exportCSV(activeData, `transitops_${tab}_report`)}>
             <Download size={15} /> Export CSV
           </button>
-          <button id="export-pdf-btn" className="btn btn-primary" onClick={exportPDF}>
+          <button id="export-pdf-btn" className="btn-logistica" onClick={exportPDF}>
             <Download size={15} /> Export PDF
           </button>
         </div>
       </div>
 
       {/* Tab Selector */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'rgba(255,255,255,0.03)', padding: 4, borderRadius: 'var(--radius-md)', width: 'fit-content', border: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 24, background: 'var(--bg-main)', padding: 4, borderRadius: 8, width: 'fit-content', border: '1px solid var(--border-color)' }}>
         {tabs.map(({ key, label, icon }) => (
           <button key={key} id={`report-tab-${key}`}
             style={{
               display: 'flex', alignItems: 'center', gap: 6, padding: '8px 18px',
-              borderRadius: 'var(--radius-sm)', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-              background: tab === key ? 'var(--primary)' : 'transparent',
-              color: tab === key ? 'white' : 'var(--text-secondary)',
+              borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+              background: tab === key ? 'var(--logistica-primary)' : 'transparent',
+              color: tab === key ? 'white' : 'var(--text-muted)',
               transition: 'all 150ms', fontFamily: 'inherit'
             }}
             onClick={() => setTab(key)}
@@ -162,8 +162,8 @@ export default function Reports() {
           {/* Fuel Efficiency */}
           {tab === 'fuel' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div className="chart-card">
-                <div className="chart-title">Fuel Efficiency (km per Liter) by Vehicle</div>
+              <div className="logistica-card">
+                <h4 style={{ marginBottom: 24, fontSize: 18 }}>Fuel Efficiency (km per Liter) by Vehicle</h4>
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={fuelData} margin={{ top: 5, right: 10, bottom: 20, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -177,12 +177,12 @@ export default function Reports() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="card" style={{ padding: 0 }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
-                  <div className="card-title">Fuel Efficiency Details</div>
+              <div className="logistica-card" style={{ padding: 0 }}>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)' }}>
+                  <h5 style={{ margin: 0 }}>Fuel Efficiency Details</h5>
                 </div>
-                <div className="data-table-wrapper">
-                  <table className="data-table">
+                <div className="logistica-table-container">
+                  <table className="logistica-table">
                     <thead>
                       <tr>
                         <th>Vehicle</th>
@@ -218,8 +218,8 @@ export default function Reports() {
           {/* Operational Cost */}
           {tab === 'cost' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div className="chart-card">
-                <div className="chart-title">Operational Cost Breakdown by Vehicle</div>
+              <div className="logistica-card">
+                <h4 style={{ marginBottom: 24, fontSize: 18 }}>Operational Cost Breakdown by Vehicle</h4>
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={costData} margin={{ top: 5, right: 10, bottom: 20, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -234,12 +234,12 @@ export default function Reports() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="card" style={{ padding: 0 }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
-                  <div className="card-title">Cost Details per Vehicle</div>
+              <div className="logistica-card" style={{ padding: 0 }}>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)' }}>
+                  <h5 style={{ margin: 0 }}>Cost Details per Vehicle</h5>
                 </div>
-                <div className="data-table-wrapper">
-                  <table className="data-table">
+                <div className="logistica-table-container">
+                  <table className="logistica-table">
                     <thead>
                       <tr>
                         <th>Vehicle</th>
@@ -274,8 +274,8 @@ export default function Reports() {
           {/* Vehicle ROI */}
           {tab === 'roi' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              <div className="chart-card">
-                <div className="chart-title">Vehicle ROI % — (Revenue − Costs) / Acquisition Cost × 100</div>
+              <div className="logistica-card">
+                <h4 style={{ marginBottom: 24, fontSize: 18 }}>Vehicle ROI % — (Revenue − Costs) / Acquisition Cost × 100</h4>
                 <ResponsiveContainer width="100%" height={280}>
                   <BarChart data={roiData} margin={{ top: 5, right: 10, bottom: 20, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -291,12 +291,12 @@ export default function Reports() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="card" style={{ padding: 0 }}>
-                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
-                  <div className="card-title">ROI Details</div>
+              <div className="logistica-card" style={{ padding: 0 }}>
+                <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-color)' }}>
+                  <h5 style={{ margin: 0 }}>ROI Details</h5>
                 </div>
-                <div className="data-table-wrapper">
-                  <table className="data-table">
+                <div className="logistica-table-container">
+                  <table className="logistica-table">
                     <thead>
                       <tr>
                         <th>Vehicle</th>
