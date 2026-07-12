@@ -11,6 +11,7 @@ import Trips from './pages/Trips';
 import Maintenance from './pages/Maintenance';
 import Fuel from './pages/Fuel';
 import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 
 function ProtectedLayout({ children }) {
   const { isAuthenticated } = useAuth();
@@ -41,6 +42,7 @@ function AppRoutes() {
       <Route path="/maintenance" element={<ProtectedLayout><Maintenance /></ProtectedLayout>} />
       <Route path="/fuel" element={<ProtectedLayout><Fuel /></ProtectedLayout>} />
       <Route path="/reports" element={<ProtectedLayout><Reports /></ProtectedLayout>} />
+      <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
       <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

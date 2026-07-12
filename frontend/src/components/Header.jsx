@@ -10,6 +10,7 @@ const pageTitles = {
   '/maintenance': { title: 'Maintenance', subtitle: 'Vehicle service and repair logs' },
   '/fuel': { title: 'Fuel & Expenses', subtitle: 'Operational cost tracking' },
   '/reports': { title: 'Reports & Analytics', subtitle: 'Performance insights and KPIs' },
+  '/settings': { title: 'Settings & RBAC', subtitle: 'Manage profile, permissions, and operational thresholds' },
 };
 
 export default function Header() {
