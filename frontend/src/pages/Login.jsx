@@ -160,6 +160,10 @@ export default function LoginPage() {
       <div className="login-bg" />
 
       <div className="login-card" style={{ maxWidth: '440px' }}>
+        <a href="/landing.html" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '16px', fontWeight: 500 }}>
+          <ArrowLeft size={14} /> Back to Home
+        </a>
+
         <div style={{ marginBottom: '24px' }}>
           <h1 style={{ fontSize: '32px', fontFamily: '"Comic Sans MS", cursive, sans-serif', fontWeight: 'bold', color: 'var(--text-main)', marginBottom: '4px' }}>
             {mode === 'login' ? 'Sign in to your account' : 'Create your account'}

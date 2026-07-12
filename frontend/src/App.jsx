@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Sidebar from './components/Sidebar';
@@ -14,9 +14,31 @@ import Reports from './pages/Reports';
 import Settings from './pages/Settings';
 import OAuthCallback from './pages/OAuthCallback';
 
+const roleRoutes = {
+  fleet_manager: ['/vehicles', '/drivers', '/maintenance', '/settings'],
+  dispatcher: ['/dashboard', '/trips', '/settings'],
+  safety_officer: ['/drivers', '/settings'],
+  financial_analyst: ['/fuel', '/reports', '/settings']
+};
+
+const defaultLanding = {
+  fleet_manager: '/vehicles',
+  dispatcher: '/dashboard',
+  safety_officer: '/drivers',
+  financial_analyst: '/fuel'
+};
+
 function ProtectedLayout({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const location = useLocation();
+
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+
+  const allowed = roleRoutes[user?.role] || [];
+  if (!allowed.includes(location.pathname)) {
+    return <Navigate to={defaultLanding[user?.role] || '/login'} replace />;
+  }
+
   return (
     <div className="app-layout">
       <Sidebar />
@@ -30,12 +52,22 @@ function ProtectedLayout({ children }) {
   );
 }
 
+function RootRedirect() {
+  const { isAuthenticated, user } = useAuth();
+  if (isAuthenticated) {
+    return <Navigate to={defaultLanding[user?.role] || '/dashboard'} replace />;
+  }
+  // Redirect unauthenticated users to Vinayak's static hero landing page
+  window.location.href = '/landing.html';
+  return null;
+}
+
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   return (
     <Routes>
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />} />
+      <Route path="/login" element={isAuthenticated ? <Navigate to={defaultLanding[user?.role] || "/dashboard"} replace /> : <Login />} />
       <Route path="/dashboard" element={<ProtectedLayout><Dashboard /></ProtectedLayout>} />
       <Route path="/vehicles" element={<ProtectedLayout><Vehicles /></ProtectedLayout>} />
       <Route path="/drivers" element={<ProtectedLayout><Drivers /></ProtectedLayout>} />
@@ -46,7 +78,7 @@ function AppRoutes() {
       <Route path="/settings" element={<ProtectedLayout><Settings /></ProtectedLayout>} />
       {/* Google OAuth2 Callback — handles redirect from backend after Google auth */}
       <Route path="/auth/callback" element={<OAuthCallback />} />
-      <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />} />
+      <Route path="/" element={<RootRedirect />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
