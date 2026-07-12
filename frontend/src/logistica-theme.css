@@ -514,3 +514,62 @@ h1, h2, h3, h4, h5, h6 {
   to { transform: rotate(360deg); }
 }
 
+/* Login Page Styles (Centered Card Layout) */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-main);
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+  box-sizing: border-box;
+}
+.login-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(255, 62, 65, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 10% 80%, rgba(81, 207, 237, 0.06) 0%, transparent 50%);
+  z-index: 1;
+}
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: var(--card-shadow);
+  z-index: 2;
+  position: relative;
+  box-sizing: border-box;
+}
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.login-logo-icon {
+  background: var(--logistica-primary);
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+.login-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.divider {
+  border-top: 1px solid var(--border-color);
+}
+

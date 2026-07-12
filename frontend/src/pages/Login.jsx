@@ -1,9 +1,26 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
 import { Zap, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+// Google 'G' SVG icon — official Google brand colors
+const GoogleIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+    <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+    <path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+    <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+  </svg>
+);
+
+const DEMO_ACCOUNTS = [
+  { role: 'Fleet Manager', email: 'fleet@transitops.com', color: '#6366f1' },
+  { role: 'Dispatcher', email: 'driver@transitops.com', color: '#06b6d4' },
+  { role: 'Safety Officer', email: 'safety@transitops.com', color: '#10b981' },
+  { role: 'Financial Analyst', email: 'finance@transitops.com', color: '#f59e0b' },
+];
 
 const ROLES = [
   { value: 'fleet_manager', label: 'Fleet Manager' },
@@ -17,24 +34,39 @@ export default function LoginPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'dispatcher' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Read ?error param set by backend on OAuth2 rejection (e.g., local account conflict)
+  useEffect(() => {
+    const urlError = searchParams.get('error');
+    if (urlError) {
+      setError(decodeURIComponent(urlError));
+    }
+  }, [searchParams]);
+
+  const handleGoogleLogin = () => {
+    setGoogleLoading(true);
+    setError('');
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError('');
-    if (!form.email || !form.password || !form.role) {
-      setError('Please enter email, password, and select your role.');
+    if (!form.email || !form.password) {
+      setError('Please enter email and password.');
       return;
     }
     setLoading(true);
     try {
-      const user = await login(form.email, form.password, form.role);
+      const user = await login(form.email, form.password);
       toast.success('Welcome to TransitOps!');
       
-      // Scoped redirection based on user role
+      // Auto redirect based on role
       if (user.role === 'fleet_manager') {
         navigate('/vehicles');
       } else if (user.role === 'dispatcher') {
@@ -90,6 +122,11 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fillDemo = (email) => {
+    setForm(f => ({ ...f, email, password: 'password123' }));
+    setError('');
   };
 
   const toggleMode = () => {
@@ -154,36 +191,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label" style={{ fontSize: '11px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--text-muted)' }}>ROLE (RBAC)</label>
-                <select
-                  className="form-select"
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', background: 'var(--bg-main)', border: '1px solid var(--border)', color: 'var(--text-main)' }}
-                  value={form.role}
-                  onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
-                  required
-                >
-                  {ROLES.map(r => (
-                    <option key={r.value} value={r.value}>{r.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'var(--text-muted)' }}>
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={e => setRememberMe(e.target.checked)}
-                    style={{ width: '16px', height: '16px', accentColor: 'var(--logistica-primary)' }}
-                  />
-                  Remember me
-                </label>
-                <a href="#forgot" style={{ color: 'var(--logistica-primary)', textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); toast.error("Contact your fleet administrator to reset password."); }}>
-                  Forgot password?
-                </a>
-              </div>
-
               {error && (
                 <div className="logistica-alert logistica-alert-danger">
                   <AlertCircle size={15} style={{ flexShrink: 0 }} />
@@ -205,6 +212,34 @@ export default function LoginPage() {
               </button>
             </form>
 
+            {/* ─── Google OAuth Button ─── */}
+            <div style={{ marginTop: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '0 0 16px' }}>
+                <div style={{ flex: 1, height: 1, background: 'var(--border-color)', opacity: 0.3 }} />
+                <span style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>or continue with</span>
+                <div style={{ flex: 1, height: 1, background: 'var(--border-color)', opacity: 0.3 }} />
+              </div>
+              <button
+                id="google-login-btn"
+                type="button"
+                className="btn-google"
+                onClick={handleGoogleLogin}
+                disabled={googleLoading || loading}
+              >
+                {googleLoading ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span className="google-spinner" />
+                    Connecting to Google...
+                  </span>
+                ) : (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <GoogleIcon />
+                    Continue with Google
+                  </span>
+                )}
+              </button>
+            </div>
+
             <div style={{ textAlign: 'center', marginTop: '16px' }}>
               <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Don't have an account? </span>
               <button
@@ -218,14 +253,30 @@ export default function LoginPage() {
 
             <div className="divider" style={{ margin: '20px 0 16px', opacity: 0.2 }} />
 
-            <div style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: '1.8' }}>
-              <div style={{ fontWeight: '600', marginBottom: '6px' }}>Access is scoped by role after login:</div>
-              <ul style={{ paddingLeft: '16px', listStyleType: 'disc' }}>
-                <li>Fleet Manager &rarr; Fleet, Maintenance</li>
-                <li>Dispatcher &rarr; Dashboard, Trips</li>
-                <li>Safety Officer &rarr; Drivers, Compliance</li>
-                <li>Financial Analyst &rarr; Fuel &amp; Expenses, Analytics</li>
-              </ul>
+            <div>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', marginBottom: 12 }}>
+                Demo Accounts (password: password123)
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                {DEMO_ACCOUNTS.map(({ role, email, color }) => (
+                  <button
+                    key={email}
+                    id={`demo-${role.toLowerCase().replace(' ', '-')}`}
+                    type="button"
+                    onClick={() => fillDemo(email)}
+                    style={{
+                      background: `${color}14`, border: `1px solid ${color}30`,
+                      borderRadius: 'var(--radius-sm)', padding: '8px 10px',
+                      cursor: 'pointer', textAlign: 'left', transition: 'all 150ms'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = `${color}60`}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = `${color}30`}
+                  >
+                    <div style={{ fontSize: 11, fontWeight: 700, color, marginBottom: 2 }}>{role}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{email}</div>
+                  </button>
+                ))}
+              </div>
             </div>
           </>
         ) : (

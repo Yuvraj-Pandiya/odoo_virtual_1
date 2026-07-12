@@ -19,10 +19,10 @@ const generateToken = (user) => {
 // POST /api/auth/login
 const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !role) {
-      return res.status(400).json({ success: false, message: 'Email, password, and role selection are required.' });
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required.' });
     }
 
     const result = await query(
@@ -38,10 +38,6 @@ const login = async (req, res) => {
 
     if (!user.is_active) {
       return res.status(401).json({ success: false, message: 'Account is disabled. Contact admin.' });
-    }
-
-    if (user.role !== role) {
-      return res.status(403).json({ success: false, message: `Access denied. Selected role '${role}' does not match your registered profile role.` });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password_hash);

@@ -36,8 +36,8 @@ export const AuthProvider = ({ children }) => {
   });
 
   // ─── Local Email/Password Login (UNCHANGED) ──────────────────────────────
-  const login = useCallback(async (email, password, role) => {
-    const { data } = await api.post('/auth/login', { email, password, role });
+  const login = useCallback(async (email, password) => {
+    const { data } = await api.post('/auth/login', { email, password });
     localStorage.setItem('transitops_token', data.token);
     localStorage.setItem('transitops_user', JSON.stringify(data.user));
     setUser(data.user);
