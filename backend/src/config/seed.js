@@ -64,7 +64,7 @@ const seed = async () => {
 
     // Get the trip id for fuel log
     const trip = await query("SELECT id FROM trips WHERE source = 'Mumbai' LIMIT 1");
-    
+
     // Seed fuel logs
     await query(`
       INSERT INTO fuel_logs (vehicle_id, trip_id, liters, cost_per_liter, date, odometer_reading) VALUES
@@ -95,7 +95,7 @@ const seed = async () => {
     console.log('  driver@transitops.com    | password123 | Driver');
     console.log('  safety@transitops.com    | password123 | Safety Officer');
     console.log('  finance@transitops.com   | password123 | Financial Analyst');
-    
+
   } catch (err) {
     console.error('❌ Seeding failed:', err.message);
     throw err;
