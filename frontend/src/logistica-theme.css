@@ -445,3 +445,72 @@ h1, h2, h3, h4, h5, h6 {
   position: sticky;
   bottom: 0;
 }
+
+/* ===== Google OAuth2 Login Button ===== */
+.btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  color: var(--text-main, #f1f5f9);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-google::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(66, 133, 244, 0.07) 0%, rgba(52, 168, 83, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.btn-google:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.26);
+  box-shadow: 0 2px 12px rgba(66, 133, 244, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-google:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.btn-google:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn-google:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Google button loading spinner */
+.google-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #4285F4;
+  border-radius: 50%;
+  animation: google-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes google-spin {
+  to { transform: rotate(360deg); }
+}
+

@@ -2,6 +2,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/db');
 
+/**
+ * generateToken — shared JWT factory
+ * WHY: Used by BOTH local login AND Google OAuth callback.
+ *      Produces identical payload so all JWT middleware works the same for both auth methods.
+ * PAYLOAD: { id, email, role } — matches what middleware/auth.js decodes.
+ */
 const generateToken = (user) => {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
@@ -235,4 +241,53 @@ const changePassword = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getMe, getUsers, updateUserRole, updateUserStatus, updateProfile, changePassword };
+/**
+ * GET /api/auth/google/callback — Google OAuth2 callback handler
+ * ---------------------------------------------------------------
+ * WHY: After Passport successfully authenticates the Google user (all 3 cases handled
+ *      in config/passport.js), this controller:
+ *       1. Generates a JWT using the SAME generateToken() as local login.
+ *       2. Redirects the BROWSER (not axios) to the React callback page.
+ *       3. Passes token + user as URL query params (base64-encoded for safety).
+ *
+ * HOW THE TOKEN REACHES REACT:
+ *   Browser redirect → /auth/callback?token=JWT&user=BASE64_JSON
+ *   OAuthCallback.jsx reads the URL params → saves to localStorage → navigates to /dashboard.
+ *
+ * ERROR HANDLING:
+ *   If Passport fails (Case B — local account conflict), req.user is undefined.
+ *   We redirect to /login?error=local_account_exists so the UI can show the message.
+ */
+const googleCallback = (req, res) => {
+  try {
+    if (!req.user) {
+      // Passport rejected the user (Case B or disabled account)
+      const message = encodeURIComponent(
+        req.authInfo?.message ||
+        'Google authentication failed. Please try again.'
+      );
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=${message}`);
+    }
+
+    const token = generateToken(req.user);
+    const userPayload = Buffer.from(
+      JSON.stringify({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        role: req.user.role,
+        profile_picture: req.user.profile_picture || null,
+      })
+    ).toString('base64');
+
+    // Redirect browser to React callback route with JWT embedded in URL
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth/callback?token=${token}&user=${userPayload}`
+    );
+  } catch (err) {
+    console.error('Google callback error:', err);
+    res.redirect(`${process.env.FRONTEND_URL}/login?error=server_error`);
+  }
+};
+
+module.exports = { login, register, getMe, getUsers, updateUserRole, updateUserStatus, updateProfile, changePassword, googleCallback };
